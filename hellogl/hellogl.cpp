@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#include "Shader.h"
+
 using namespace std;
 using namespace glm;
 
@@ -52,7 +54,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 int main()
 {
 	GLFWwindow* window;
-	GLuint vertex_buffer, vertex_shader, fragment_shader, program;
+	GLuint vertex_buffer;
 	GLint mvp_location, vpos_location, vcol_location;
 
 	//glfwSetErrorCallback(error_collback);
@@ -89,30 +91,14 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
-    glCompileShader(vertex_shader);
-    GLchar log[512];
-    GLsizei l;
-    glGetShaderInfoLog(vertex_shader, 512, &l, log);
-    cout << string(log, l) << endl;
+    Shader shader;
+    shader.addVertexShaderCode(vertex_shader_text);
+    shader.addFragmentShaderCode(fragment_shader_text);
+    shader.link();
 
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
-    glCompileShader(fragment_shader);
-    glGetShaderInfoLog(vertex_shader, 512, &l, log);
-    cout << string(log, l) << endl;
-
-    program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
-    glGetProgramInfoLog(program, 512, &l, log);
-    cout << string(log, l) << endl;
-
-    mvp_location = glGetUniformLocation(program, "MVP");
-    vpos_location = glGetAttribLocation(program, "vPos");
-    vcol_location = glGetAttribLocation(program, "vCol");
+    mvp_location = shader.uniformLocation("MVP");
+    vpos_location = shader.attribLocation("vPos");
+    vcol_location = shader.attribLocation("vCol");
 
     glEnableVertexAttribArray(vpos_location);
     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), NULL);
@@ -136,9 +122,10 @@ int main()
         p = ortho(-ratio, ratio, -1.0f, 1.0f, 1.0f, -1.0f);
         mvp = p * m;
 
-        glUseProgram(program);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, &mvp[0][0]);
+        shader.bind();
+        shader.setUniformValue(mvp_location, mvp);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        shader.release();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
