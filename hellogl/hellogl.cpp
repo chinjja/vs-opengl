@@ -5,39 +5,30 @@
 #include <glm/ext.hpp>
 
 #include "Shader.h"
+#include "Mesh.h"
 
 using namespace std;
 using namespace glm;
 
-static const struct
-{
-    float x, y;
-    float r, g, b;
-} vertices[3] =
-{
-    { -0.6f, -0.4f, 1.f, 0.f, 0.f },
-    {  0.6f, -0.4f, 0.f, 1.f, 0.f },
-    {   0.f,  0.6f, 0.f, 0.f, 1.f }
-};
-
 static const char* vertex_shader_text =
-"#version 110\n"
+"#version 330 core\n"
 "uniform mat4 MVP;\n"
-"attribute vec3 vCol;\n"
-"attribute vec2 vPos;\n"
-"varying vec3 color;\n"
+"layout(location=1) in vec3 vCol;\n"
+"layout(location=0) in vec3 vPos;\n"
+"out vec3 color;\n"
 "void main()\n"
 "{\n"
-"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
+"    gl_Position = MVP * vec4(vPos, 1.0);\n"
 "    color = vCol;\n"
 "}\n";
 
 static const char* fragment_shader_text =
-"#version 110\n"
-"varying vec3 color;\n"
+"#version 330 core\n"
+"in vec3 color;\n"
+"out vec4 fragColor;\n"
 "void main()\n"
 "{\n"
-"    gl_FragColor = vec4(color, 1.0);\n"
+"    fragColor = vec4(color, 1.0);\n"
 "}\n";
 
 static void error_callback(int error, const char* description)
@@ -54,8 +45,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 int main()
 {
 	GLFWwindow* window;
-	GLuint vertex_buffer;
-	GLint mvp_location, vpos_location, vcol_location;
+	GLint mvp_location;
 
 	//glfwSetErrorCallback(error_collback);
     if (!glfwInit())
@@ -87,24 +77,25 @@ int main()
     //
     glfwSwapInterval(1);
 
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
     Shader shader;
     shader.addVertexShaderCode(vertex_shader_text);
     shader.addFragmentShaderCode(fragment_shader_text);
     shader.link();
 
     mvp_location = shader.uniformLocation("MVP");
-    vpos_location = shader.attribLocation("vPos");
-    vcol_location = shader.attribLocation("vCol");
 
-    glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), NULL);
-
-    glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (void*)(sizeof(float) * 2));
+    std::vector<glm::vec3> vertex_data = {
+        { -0.6f, -0.4f, 0.0f },
+        {  0.6f, -0.4f, 0.0f },
+        {   0.f,  0.6f, 0.0f }
+    };
+    std::vector<glm::vec3> normal_data = {
+        { 1.f, 0.f, 0.f },
+        { 0.f, 1.f, 0.f },
+        { 0.f, 0.f, 1.f }
+    };
+    std::vector<glm::vec2> uv_data;
+    Mesh mesh(vertex_data, normal_data, uv_data);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -124,7 +115,11 @@ int main()
 
         shader.bind();
         shader.setUniformValue(mvp_location, mvp);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        mesh.bind();
+        mesh.render();
+        mesh.release();
+
         shader.release();
 
         glfwSwapBuffers(window);
