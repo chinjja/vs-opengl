@@ -1,4 +1,8 @@
 #include "GameObject.h"
+#include "Mesh.h"
+#include "Light.h"
+#include "Camera.h"
+#include "Texture.h"
 
 using namespace glm;
 

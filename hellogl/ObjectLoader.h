@@ -1,9 +1,10 @@
 #pragma once
-#include "Mesh.h"
 
 #include <memory>
 #include <vector>
 #include <glm/glm.hpp>
+
+class Mesh;
 
 class ObjectLoader
 {

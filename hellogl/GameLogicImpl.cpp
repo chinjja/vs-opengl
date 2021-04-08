@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#include "GameLogicImpl.h"
 #include "Shader.h"
 #include "Mesh.h"
 #include "ObjectLoader.h"
@@ -13,7 +14,6 @@
 #include "Light.h"
 #include "GameEngine.h"
 #include "GameLogic.h"
-#include "GameLogicImpl.h"
 
 using namespace std;
 using namespace glm;

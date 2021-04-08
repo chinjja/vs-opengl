@@ -1,8 +1,12 @@
 #include <unordered_map>
 
+#include "Shader.h"
 #include "GameObject.h"
 #include "Scene.h"
 #include "Shader.h"
+#include "Light.h"
+#include "Mesh.h"
+#include "Texture.h"
 
 void Scene::add(const std::shared_ptr<GameObject>& obj)
 {

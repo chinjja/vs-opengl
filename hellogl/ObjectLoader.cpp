@@ -1,4 +1,5 @@
 #include "ObjectLoader.h"
+#include "Mesh.h"
 
 #include <cstdio>
 #include <regex>
@@ -93,7 +94,7 @@ bool ObjectLoader::load(const char* filename, std::vector<glm::vec3>& vertex_dat
             }
         }
     }
-    
+    return true;
 }
 
 shared_ptr<Mesh> ObjectLoader::load(const char* filename)

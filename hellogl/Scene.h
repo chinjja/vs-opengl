@@ -3,8 +3,10 @@
 #include <memory>
 #include <vector>
 
-#include "Shader.h"
-#include "GameObject.h"
+#include <glm/glm.hpp>
+
+class Shader;
+class GameObject;
 
 class Scene
 {

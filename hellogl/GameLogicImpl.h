@@ -1,8 +1,9 @@
 #pragma once
 #include <memory>
-#include "Scene.h"
-#include "GameObject.h"
 #include "GameLogic.h"
+#include "Scene.h"
+
+class GameObject;
 
 class GameLogicImpl : public GameLogic
 {
