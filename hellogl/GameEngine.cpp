@@ -30,7 +30,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-GameEngine::GameEngine(GameLogic* logic, int w, int h)
+GameEngine::GameEngine(std::shared_ptr<GameLogic>& logic, int w, int h)
     : logic_(logic)
 {
     GLFWwindow* window;

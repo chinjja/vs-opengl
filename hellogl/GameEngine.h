@@ -1,13 +1,13 @@
 #pragma once
-
+#include <memory>
 class GameLogic;
 
 class GameEngine
 {
 public:
-	GameEngine(GameLogic* logic, int width = 640, int height = 480);
+	GameEngine(std::shared_ptr<GameLogic>& logic, int width = 640, int height = 480);
 
 private:
-	GameLogic* logic_;
+	std::shared_ptr<GameLogic> logic_;
 };
 
