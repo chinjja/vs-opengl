@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <memory>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -69,7 +70,7 @@ int main()
     shader.setUniformValue("directionalLight.direction", vec3(0, -1, -1));
     shader.setUniformValue("directionalLight.intensity", 1.0f);
 
-    Mesh *mesh = ObjectLoader::load("models/cube.obj");
+    auto mesh = ObjectLoader::load("models/cube.obj");
     if (!mesh) {
         cerr << "obj load fail" << endl;
         std::exit(EXIT_FAILURE);
@@ -79,9 +80,12 @@ int main()
     glEnable(GL_CULL_FACE);
 
     double prev_time = glfwGetTime();
-
+    
     GameObject gameObject;
+    GameObject gameObject2;
     gameObject.mesh = mesh;
+    gameObject2.position += vec3(1, 0, 0);
+    gameObject2.mesh = mesh;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -102,7 +106,7 @@ int main()
         gameObject.rotation = quat(vec3(0, pi<float>() * delta_time * 0.25f, 0)) * gameObject.rotation;
         m = gameObject.matrix();
         v = lookAt(vec3(0, 0, 5), vec3(0, 0, 0), vec3(0, 1, 0));
-        p = perspective(pi<float>()/3, ratio, 0.1f, 10.0f);
+        p = perspective(pi<float>() / 3, ratio, 0.1f, 10.0f);
         mvp = p * v * m;
 
         shader.bind();
@@ -111,12 +115,18 @@ int main()
 
         gameObject.render();
 
+        m = gameObject2.matrix();
+        shader.setUniformValue("M", gameObject2.matrix());
+        mvp = p * v * m;
+        shader.setUniformValue("MVP", mvp);
+        gameObject2.render();
+
         shader.release();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    delete mesh;
+    
     glfwDestroyWindow(window);
     glfwTerminate();
     std::exit(EXIT_SUCCESS);

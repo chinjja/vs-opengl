@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <glm/ext.hpp>
 
 #include "Mesh.h"
@@ -14,6 +15,6 @@ public:
 
 	glm::mat4 matrix();
 	void render();
-	Mesh* mesh;
+	std::shared_ptr<Mesh> mesh;
 };
 

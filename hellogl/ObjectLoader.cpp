@@ -96,13 +96,13 @@ bool ObjectLoader::load(const char* filename, std::vector<glm::vec3>& vertex_dat
     
 }
 
-Mesh* ObjectLoader::load(const char* filename)
+shared_ptr<Mesh> ObjectLoader::load(const char* filename)
 {
     vector<vec3> vertex;
     vector<vec2> uv;
     vector<vec3> normal;
     if (load(filename, vertex, normal, uv)) {
-        return new Mesh(vertex, normal, uv);
+        return shared_ptr<Mesh>(new Mesh(vertex, normal, uv));
     }
-    return nullptr;
+    return shared_ptr<Mesh>();
 }
