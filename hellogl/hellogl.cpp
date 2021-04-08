@@ -26,7 +26,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 int main()
 {
 	GLFWwindow* window;
-	GLint mvp_location;
 
 	glfwSetErrorCallback(error_callback);
     if (!glfwInit())
@@ -65,7 +64,9 @@ int main()
     shader.addFragmentShaderFile("scene.frag");
     shader.link();
 
-    mvp_location = shader.uniformLocation("MVP");
+    shader.setUniformValue("ambient", vec3(1, 1, 1));
+    shader.setUniformValue("directionalLight.direction", vec3(0, -1, -1));
+    shader.setUniformValue("directionalLight.intensity", 1.0f);
 
     Mesh *mesh = ObjectLoader::load("models/cube.obj");
     if (!mesh) {
@@ -76,11 +77,18 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    double prev_time = glfwGetTime();
+    quat rot = quat(1, vec3());
+
     while (!glfwWindowShouldClose(window))
     {
+        double cur_time = glfwGetTime();
+        float delta_time = cur_time - prev_time;
+        prev_time = cur_time;
+
         float ratio;
         int width, height;
-        mat4 m, p, mvp;
+        mat4 m, v, p, mvp;
 
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float)height;
@@ -88,12 +96,15 @@ int main()
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        m = rotate(mat4(1), (float)glfwGetTime(), vec3(0, 1, 0));
-        p = ortho(-ratio*2, ratio*2, -2.0f, 2.0f, 2.0f, -2.0f);
-        mvp = p * m;
+        rot = quat(vec3(0, pi<float>() * delta_time * 0.25f, 0)) * rot;
+        m = mat4_cast(rot);
+        v = lookAt(vec3(0, 0, 5), vec3(0, 0, 0), vec3(0, 1, 0));
+        p = perspective(pi<float>()/3, ratio, 0.1f, 10.0f);
+        mvp = p * v * m;
 
         shader.bind();
-        shader.setUniformValue(mvp_location, mvp);
+        shader.setUniformValue("M", m);
+        shader.setUniformValue("MVP", mvp);
 
         mesh->bind();
         mesh->render();

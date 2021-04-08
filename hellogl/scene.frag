@@ -1,7 +1,18 @@
 #version 330 core
-in vec3 color;
+
+struct DirectionalLight {
+	vec3 direction;
+	float intensity;
+};
+
+uniform DirectionalLight directionalLight;
+uniform vec3 ambient;
+
+in vec3 modelNormal;
 out vec4 fragColor;
+
 void main()
 {
-    fragColor = vec4(abs(color), 1.0);
+	float factor = clamp(dot(-directionalLight.direction, modelNormal), 0, 1) * directionalLight.intensity;
+	fragColor = vec4(ambient * 0.2 + ambient * factor, 1);
 }
