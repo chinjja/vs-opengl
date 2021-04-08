@@ -1,3 +1,6 @@
+#include <unordered_map>
+
+#include "GameObject.h"
 #include "Scene.h"
 #include "Shader.h"
 

@@ -102,7 +102,7 @@ shared_ptr<Mesh> ObjectLoader::load(const char* filename)
     vector<vec2> uv;
     vector<vec3> normal;
     if (load(filename, vertex, normal, uv)) {
-        return shared_ptr<Mesh>(new Mesh(vertex, normal, uv));
+        return make_shared<Mesh>(vertex, normal, uv);
     }
     return shared_ptr<Mesh>();
 }

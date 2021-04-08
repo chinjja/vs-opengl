@@ -2,13 +2,9 @@
 
 #include <memory>
 #include <vector>
-#include <unordered_map>
 
 #include "Shader.h"
 #include "GameObject.h"
-#include "Mesh.h"
-#include "Light.h"
-#include "Camera.h"
 
 class Scene
 {
