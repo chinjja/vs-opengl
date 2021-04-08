@@ -100,6 +100,7 @@ GLint Shader::uniformLocation(const char* name)
 	auto it = locations_.find(name);
 	if (it == locations_.end()) {
 		location = glGetUniformLocation(id_, name);
+		assert(location >= 0);
 		locations_[name] = location;
 	}
 	else {
@@ -114,6 +115,7 @@ GLint Shader::attribLocation(const char* name)
 	auto it = attrib_.find(name);
 	if (it == attrib_.end()) {
 		attrib = glGetAttribLocation(id_, name);
+		assert(attrib >= 0);
 		attrib_[name] = attrib;
 	}
 	else {
