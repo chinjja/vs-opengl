@@ -4,6 +4,9 @@
 #include <glm/ext.hpp>
 
 #include "Mesh.h"
+#include "Light.h"
+#include "Camera.h"
+#include "Texture.h"
 
 class GameObject
 {
@@ -23,5 +26,8 @@ public:
 	glm::vec3 up() const;
 	void render() const;
 	std::shared_ptr<Mesh> mesh;
+	std::shared_ptr<Light> light;
+	std::shared_ptr<Camera> camera;
+	std::shared_ptr<Texture> texture;
 };
 

@@ -10,6 +10,9 @@
 #include "Mesh.h"
 #include "ObjectLoader.h"
 #include "GameObject.h"
+#include "Scene.h"
+#include "Camera.h"
+#include "Light.h"
 
 using namespace std;
 using namespace glm;
@@ -61,12 +64,13 @@ int main()
     //
     glfwSwapInterval(1);
 
-    Shader shader;
-    shader.addVertexShaderFile("scene.vert");
-    shader.addFragmentShaderFile("scene.frag");
-    shader.link();
+    shared_ptr<Shader> shader(new Shader);
+    shader->addVertexShaderFile("scene.vert");
+    shader->addFragmentShaderFile("scene.frag");
+    shader->link();
 
-    shader.setUniformValue("ambient", vec3(1, 1, 1));
+    Scene scene;
+    scene.shader = shader;
 
     auto mesh = ObjectLoader::load("models/cube.obj");
     if (!mesh) {
@@ -77,23 +81,30 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    shared_ptr<GameObject> cube1(new GameObject);
+    cube1->position.x -= 1.5;
+    cube1->mesh = mesh;
+    cube1->texture = make_shared<Texture>(vec3(1, 0, 0));
+    scene.add(cube1);
+
+    shared_ptr<GameObject> cube2(new GameObject);
+    cube2->position.x += 1.5;
+    cube2->mesh = mesh;
+    cube2->texture = make_shared<Texture>(vec3(1, 1, 1));
+    scene.add(cube2);
+
+    shared_ptr<GameObject> camera(new GameObject);
+    camera->position.z += 8;
+    camera->lookAt(vec3(0, 0, 0), vec3(0, 1, 0));
+    camera->camera = make_shared<Camera>();
+    scene.add(camera);
+
+    shared_ptr<GameObject> light(new GameObject);
+    light->lookAlong(vec3(0, -1, -1));
+    light->light = make_shared<Light>(1);
+    scene.add(light);
+
     double prev_time = glfwGetTime();
-    
-    GameObject gameObject;
-    GameObject gameObject2;
-    gameObject.position += vec3(-1.5, 0, 0);
-    gameObject.mesh = mesh;
-    gameObject2.position += vec3(1.5, 0, 0);
-    gameObject2.mesh = mesh;
-
-    GameObject camera;
-    camera.position.z += 8;
-    camera.lookAt(vec3(0, 0, 0), vec3(0, 1, 0));
-
-    GameObject light;
-    light.lookAlong(vec3(0, -1, -1));
-    shader.setUniformValue("directionalLight.direction", light.forward());
-    shader.setUniformValue("directionalLight.intensity", 1.0f);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -103,7 +114,6 @@ int main()
 
         float ratio;
         int width, height;
-        mat4 m, v, p, mvp;
 
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float)height;
@@ -111,25 +121,10 @@ int main()
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        gameObject.preRotate(vec3(0, pi<float>() * delta_time * 0.25f, 0));
-        m = gameObject.matrix();
-        v = camera.matrix();
-        p = perspective(pi<float>() / 3, ratio, 0.1f, 10.0f);
-        mvp = p * v * m;
+        cube1->preRotate(vec3(0, pi<float>() * delta_time * 0.25f, 0));
 
-        shader.bind();
-        shader.setUniformValue("M", m);
-        shader.setUniformValue("MVP", mvp);
-
-        gameObject.render();
-
-        m = gameObject2.matrix();
-        shader.setUniformValue("M", gameObject2.matrix());
-        mvp = p * v * m;
-        shader.setUniformValue("MVP", mvp);
-        gameObject2.render();
-
-        shader.release();
+        scene.projection = perspective(pi<float>() / 3, ratio, 0.1f, 10.0f);
+        scene.render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
