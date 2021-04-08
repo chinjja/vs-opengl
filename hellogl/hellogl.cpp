@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "ObjectLoader.h"
+#include "GameObject.h"
 
 using namespace std;
 using namespace glm;
@@ -78,7 +79,9 @@ int main()
     glEnable(GL_CULL_FACE);
 
     double prev_time = glfwGetTime();
-    quat rot = quat(1, vec3());
+
+    GameObject gameObject;
+    gameObject.mesh = mesh;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -96,8 +99,8 @@ int main()
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        rot = quat(vec3(0, pi<float>() * delta_time * 0.25f, 0)) * rot;
-        m = mat4_cast(rot);
+        gameObject.rotation = quat(vec3(0, pi<float>() * delta_time * 0.25f, 0)) * gameObject.rotation;
+        m = gameObject.matrix();
         v = lookAt(vec3(0, 0, 5), vec3(0, 0, 0), vec3(0, 1, 0));
         p = perspective(pi<float>()/3, ratio, 0.1f, 10.0f);
         mvp = p * v * m;
@@ -106,9 +109,7 @@ int main()
         shader.setUniformValue("M", m);
         shader.setUniformValue("MVP", mvp);
 
-        mesh->bind();
-        mesh->render();
-        mesh->release();
+        gameObject.render();
 
         shader.release();
 
