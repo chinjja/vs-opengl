@@ -23,7 +23,10 @@ bool Shader::addShaderCode(GLenum type, const char* code)
 		glGetShaderInfoLog(shader, sizeof(buf_), &len, buf_);
 		std::cout << std::string(buf_, len) << std::endl;
 	}
-	glAttachShader(id_, shader);
+	else {
+		glAttachShader(id_, shader);
+	}
+	glDeleteShader(shader);
 	return st;
 }
 
