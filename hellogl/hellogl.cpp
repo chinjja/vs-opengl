@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -6,6 +7,7 @@
 
 #include "Shader.h"
 #include "Mesh.h"
+#include "ObjectLoader.h"
 
 using namespace std;
 using namespace glm;
@@ -28,7 +30,7 @@ static const char* fragment_shader_text =
 "out vec4 fragColor;\n"
 "void main()\n"
 "{\n"
-"    fragColor = vec4(color, 1.0);\n"
+"    fragColor = vec4(abs(color), 1.0);\n"
 "}\n";
 
 static void error_callback(int error, const char* description)
@@ -51,7 +53,7 @@ int main()
     if (!glfwInit())
     {
         cerr << "glfw fail" << endl;
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -63,7 +65,7 @@ int main()
     if (!window)
     {
         glfwTerminate();
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
 
     glfwSetKeyCallback(window, key_callback);
@@ -74,7 +76,7 @@ int main()
     if (error != GLEW_OK) {
         cerr << "glew fail" << glewGetErrorString(error) << endl;
         glfwTerminate();
-        exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
     }
     //
     glfwSwapInterval(1);
@@ -86,18 +88,14 @@ int main()
 
     mvp_location = shader.uniformLocation("MVP");
 
-    std::vector<glm::vec3> vertex_data = {
-        { -0.6f, -0.4f, 0.0f },
-        {  0.6f, -0.4f, 0.0f },
-        {   0.f,  0.6f, 0.0f }
-    };
-    std::vector<glm::vec3> normal_data = {
-        { 1.f, 0.f, 0.f },
-        { 0.f, 1.f, 0.f },
-        { 0.f, 0.f, 1.f }
-    };
-    std::vector<glm::vec2> uv_data;
-    Mesh mesh(vertex_data, normal_data, uv_data);
+    Mesh *mesh = ObjectLoader::load("models/cube.obj");
+    if (!mesh) {
+        cerr << "obj load fail" << endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -109,26 +107,26 @@ int main()
         ratio = width / (float)height;
 
         glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         m = rotate(mat4(1), (float)glfwGetTime(), vec3(0, 1, 0));
-        p = ortho(-ratio, ratio, -1.0f, 1.0f, 1.0f, -1.0f);
+        p = ortho(-ratio*2, ratio*2, -2.0f, 2.0f, 2.0f, -2.0f);
         mvp = p * m;
 
         shader.bind();
         shader.setUniformValue(mvp_location, mvp);
 
-        mesh.bind();
-        mesh.render();
-        mesh.release();
+        mesh->bind();
+        mesh->render();
+        mesh->release();
 
         shader.release();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
+    delete mesh;
     glfwDestroyWindow(window);
     glfwTerminate();
-    exit(EXIT_SUCCESS);
+    std::exit(EXIT_SUCCESS);
 }

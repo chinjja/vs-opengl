@@ -6,7 +6,7 @@ Mesh::Mesh(const std::vector<glm::vec3>& vertex, const std::vector<glm::vec3>& n
 	glGenVertexArrays(1, &vao_);
 	glBindVertexArray(vao_);
 
-	glGenBuffers(sizeof(vbo_), vbo_);
+	glGenBuffers(sizeof(vbo_) / sizeof(vbo_[0]), vbo_);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_[0]);
 	glBufferData(GL_ARRAY_BUFFER, vertex.size() * sizeof(glm::vec3), vertex.data(), GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
