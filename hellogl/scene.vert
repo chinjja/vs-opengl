@@ -10,5 +10,5 @@ out vec3 modelNormal;
 void main()
 {
 	gl_Position = MVP * vec4(vertex_data, 1);
-	modelNormal = (M * vec4(normal_data, 0)).xyz;
+	modelNormal = normalize((M * vec4(normal_data, 0)).xyz);
 }
