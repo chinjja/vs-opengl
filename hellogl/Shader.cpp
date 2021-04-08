@@ -1,5 +1,8 @@
 #include "Shader.h"
 
+#include <cstdio>
+#include <string>
+
 Shader::Shader()
 {
 	id_ = glCreateProgram();
@@ -38,6 +41,33 @@ bool Shader::addVertexShaderCode(const char* code)
 bool Shader::addFragmentShaderCode(const char* code)
 {
 	return addShaderCode(GL_FRAGMENT_SHADER, code);
+}
+
+bool Shader::addShaderFile(GLenum type, const char* filename)
+{
+	FILE* file;
+	fopen_s(&file, filename, "r");
+	if (!file) {
+		std::cout << "can't open file: " << filename << std::endl;
+		return false;
+	}
+	std::string source;
+	char buf[2048];
+	while (!feof(file)) {
+		int len = fread(buf, 1, sizeof(buf), file);
+		source += std::string(buf, len);
+	}
+	return addShaderCode(type, source.c_str());
+}
+
+bool Shader::addVertexShaderFile(const char* filename)
+{
+	return addShaderFile(GL_VERTEX_SHADER, filename);
+}
+
+bool Shader::addFragmentShaderFile(const char* filename)
+{
+	return addShaderFile(GL_FRAGMENT_SHADER, filename);
 }
 
 bool Shader::link()

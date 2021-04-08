@@ -16,6 +16,9 @@ public:
 	bool addShaderCode(GLenum type, const char* code);
 	bool addVertexShaderCode(const char* code);
 	bool addFragmentShaderCode(const char* code);
+	bool addShaderFile(GLenum type, const char* filename);
+	bool addVertexShaderFile(const char* filename);
+	bool addFragmentShaderFile(const char* filename);
 	bool link();
 	void bind();
 	void release();

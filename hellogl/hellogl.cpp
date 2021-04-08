@@ -12,27 +12,6 @@
 using namespace std;
 using namespace glm;
 
-static const char* vertex_shader_text =
-"#version 330 core\n"
-"uniform mat4 MVP;\n"
-"layout(location=1) in vec3 vCol;\n"
-"layout(location=0) in vec3 vPos;\n"
-"out vec3 color;\n"
-"void main()\n"
-"{\n"
-"    gl_Position = MVP * vec4(vPos, 1.0);\n"
-"    color = vCol;\n"
-"}\n";
-
-static const char* fragment_shader_text =
-"#version 330 core\n"
-"in vec3 color;\n"
-"out vec4 fragColor;\n"
-"void main()\n"
-"{\n"
-"    fragColor = vec4(abs(color), 1.0);\n"
-"}\n";
-
 static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
@@ -82,8 +61,8 @@ int main()
     glfwSwapInterval(1);
 
     Shader shader;
-    shader.addVertexShaderCode(vertex_shader_text);
-    shader.addFragmentShaderCode(fragment_shader_text);
+    shader.addVertexShaderFile("scene.vert");
+    shader.addFragmentShaderFile("scene.frag");
     shader.link();
 
     mvp_location = shader.uniformLocation("MVP");
