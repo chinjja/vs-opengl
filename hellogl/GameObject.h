@@ -13,8 +13,13 @@ public:
 	glm::vec3 scale;
 	glm::quat rotation;
 
-	glm::mat4 matrix();
-	void render();
+	void rotate(const glm::quat& q);
+	void preRotate(const glm::quat& q);
+	glm::mat4 matrix() const;
+	glm::vec3 forward() const;
+	glm::vec3 right() const;
+	glm::vec3 up() const;
+	void render() const;
 	std::shared_ptr<Mesh> mesh;
 };
 

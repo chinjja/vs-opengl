@@ -103,7 +103,7 @@ int main()
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        gameObject.rotation = quat(vec3(0, pi<float>() * delta_time * 0.25f, 0)) * gameObject.rotation;
+        gameObject.preRotate(quat(vec3(0, pi<float>() * delta_time * 0.25f, 0)));
         m = gameObject.matrix();
         v = lookAt(vec3(0, 0, 5), vec3(0, 0, 0), vec3(0, 1, 0));
         p = perspective(pi<float>() / 3, ratio, 0.1f, 10.0f);
