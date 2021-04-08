@@ -24,7 +24,6 @@ public:
 	glm::vec3 forward() const;
 	glm::vec3 right() const;
 	glm::vec3 up() const;
-	void render() const;
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Light> light;
 	std::shared_ptr<Camera> camera;

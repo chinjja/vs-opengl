@@ -58,10 +58,3 @@ glm::vec3 GameObject::up() const
 {
     return rotation * glm::vec3(0, 1, 0);
 }
-
-void GameObject::render() const
-{
-    mesh->bind();
-    mesh->render();
-    mesh->release();
-}
