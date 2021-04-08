@@ -67,8 +67,6 @@ int main()
     shader.link();
 
     shader.setUniformValue("ambient", vec3(1, 1, 1));
-    shader.setUniformValue("directionalLight.direction", vec3(0, -1, -1));
-    shader.setUniformValue("directionalLight.intensity", 1.0f);
 
     auto mesh = ObjectLoader::load("models/cube.obj");
     if (!mesh) {
@@ -88,6 +86,15 @@ int main()
     gameObject2.position += vec3(1.5, 0, 0);
     gameObject2.mesh = mesh;
 
+    GameObject camera;
+    camera.position.z += 8;
+    camera.lookAt(vec3(0, 0, 0), vec3(0, 1, 0));
+
+    GameObject light;
+    light.lookAlong(vec3(0, -1, -1));
+    shader.setUniformValue("directionalLight.direction", light.forward());
+    shader.setUniformValue("directionalLight.intensity", 1.0f);
+
     while (!glfwWindowShouldClose(window))
     {
         double cur_time = glfwGetTime();
@@ -104,9 +111,9 @@ int main()
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        gameObject.preRotate(quat(vec3(0, pi<float>() * delta_time * 0.25f, 0)));
+        gameObject.preRotate(vec3(0, pi<float>() * delta_time * 0.25f, 0));
         m = gameObject.matrix();
-        v = lookAt(vec3(0, 0, 8), vec3(0, 0, 0), vec3(0, 1, 0));
+        v = camera.matrix();
         p = perspective(pi<float>() / 3, ratio, 0.1f, 10.0f);
         mvp = p * v * m;
 

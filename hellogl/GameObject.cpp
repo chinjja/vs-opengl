@@ -1,11 +1,28 @@
 #include "GameObject.h"
 
+using namespace glm;
+
 GameObject::GameObject()
     : position(0, 0, 0),
     scale(1, 1, 1),
     rotation(1, 0, 0, 0),
     mesh(nullptr)
 {
+}
+
+void GameObject::lookAlong(const glm::vec3& direction)
+{
+    vec3 bias(0, 0, -1);
+    float angle = acosf(dot(bias, direction));
+    vec3 axis = cross(bias, direction);
+    rotation = angleAxis(angle, axis);
+}
+
+void GameObject::lookAt(const glm::vec3& center, const glm::vec3& up)
+{
+    glm::mat4 m = glm::lookAt(position, center, up);
+    position = m[3];
+    rotation = glm::quat(m);
 }
 
 void GameObject::rotate(const glm::quat& q)
