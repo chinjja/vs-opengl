@@ -94,7 +94,47 @@ void Shader::setUniformValue(const char* name, const glm::mat4& mat)
 	setUniformValue(uniformLocation(name), mat);
 }
 
+void Shader::setUniformValue(const char* name, float scalar)
+{
+	setUniformValue(uniformLocation(name), scalar);
+}
+
+void Shader::setUniformValue(const char* name, const glm::vec2& vec)
+{
+	setUniformValue(uniformLocation(name), vec);
+}
+
+void Shader::setUniformValue(const char* name, const glm::vec3& vec)
+{
+	setUniformValue(uniformLocation(name), vec);
+}
+
+void Shader::setUniformValue(const char* name, const glm::vec4& vec)
+{
+	setUniformValue(uniformLocation(name), vec);
+}
+
 void Shader::setUniformValue(GLint location, const glm::mat4& mat)
 {
 	glProgramUniformMatrix4fv(id_, location, 1, GL_FALSE, &mat[0][0]);
+}
+
+void Shader::setUniformValue(GLint location, float scalar)
+{
+	glProgramUniform1fv(id_, location, 1, &scalar);
+}
+
+void Shader::setUniformValue(GLint location, const glm::vec2& vec)
+{
+	glProgramUniform2fv(id_, location, 2, &vec[0]);
+}
+
+void Shader::setUniformValue(GLint location, const glm::vec3& vec)
+{
+	glProgramUniform3fv(id_, location, 3, &vec[0]);
+}
+
+void Shader::setUniformValue(GLint location, const glm::vec4& vec)
+{
+	glProgramUniform4fv(id_, location, 4, &vec[0]);
 }

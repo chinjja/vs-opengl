@@ -23,7 +23,15 @@ public:
 	GLint uniformLocation(const char* name);
 	GLint attribLocation(const char* name);
 	void setUniformValue(const char* name, const glm::mat4& mat);
+	void setUniformValue(const char* name, float scalar);
+	void setUniformValue(const char* name, const glm::vec2& vec);
+	void setUniformValue(const char* name, const glm::vec3& vec);
+	void setUniformValue(const char* name, const glm::vec4& vec);
 	void setUniformValue(GLint location, const glm::mat4& mat);
+	void setUniformValue(GLint location, float scalar);
+	void setUniformValue(GLint location, const glm::vec2& vec);
+	void setUniformValue(GLint location, const glm::vec3& vec);
+	void setUniformValue(GLint location, const glm::vec4& vec);
 private:
 	GLuint id_;
 	GLchar buf_[256];
