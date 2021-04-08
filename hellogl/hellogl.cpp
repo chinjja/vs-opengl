@@ -83,8 +83,9 @@ int main()
     
     GameObject gameObject;
     GameObject gameObject2;
+    gameObject.position += vec3(-1.5, 0, 0);
     gameObject.mesh = mesh;
-    gameObject2.position += vec3(1, 0, 0);
+    gameObject2.position += vec3(1.5, 0, 0);
     gameObject2.mesh = mesh;
 
     while (!glfwWindowShouldClose(window))
@@ -105,7 +106,7 @@ int main()
 
         gameObject.preRotate(quat(vec3(0, pi<float>() * delta_time * 0.25f, 0)));
         m = gameObject.matrix();
-        v = lookAt(vec3(0, 0, 5), vec3(0, 0, 0), vec3(0, 1, 0));
+        v = lookAt(vec3(0, 0, 8), vec3(0, 0, 0), vec3(0, 1, 0));
         p = perspective(pi<float>() / 3, ratio, 0.1f, 10.0f);
         mvp = p * v * m;
 
