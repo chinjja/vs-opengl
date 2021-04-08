@@ -47,7 +47,7 @@ int main()
 	GLFWwindow* window;
 	GLint mvp_location;
 
-	//glfwSetErrorCallback(error_collback);
+	glfwSetErrorCallback(error_callback);
     if (!glfwInit())
     {
         cerr << "glfw fail" << endl;
