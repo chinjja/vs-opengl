@@ -3,6 +3,9 @@
 #include <cstdio>
 #include <string>
 
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
 Shader::Shader()
 {
 	id_ = glCreateProgram();
@@ -161,15 +164,15 @@ void Shader::setUniformValue(GLint location, float scalar)
 
 void Shader::setUniformValue(GLint location, const glm::vec2& vec)
 {
-	glProgramUniform2fv(id_, location, 2, &vec[0]);
+	glProgramUniform2fv(id_, location, 1, &vec[0]);
 }
 
 void Shader::setUniformValue(GLint location, const glm::vec3& vec)
 {
-	glProgramUniform3fv(id_, location, 3, &vec[0]);
+	glProgramUniform3fv(id_, location, 1, &vec[0]);
 }
 
 void Shader::setUniformValue(GLint location, const glm::vec4& vec)
 {
-	glProgramUniform4fv(id_, location, 4, &vec[0]);
+	glProgramUniform4fv(id_, location, 1, &vec[0]);
 }
