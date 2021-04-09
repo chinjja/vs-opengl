@@ -51,7 +51,7 @@ void Scene::render()
 	}
 	if(camera) {
 		shader->bind();
-		auto view = camera->global();
+		auto view = inverse(camera->global());
 		for (auto& it : lights) {
 			shader->setUniformValue("directionalLight.direction", it.second->forward());
 			shader->setUniformValue("directionalLight.intensity", it.first->intensity);

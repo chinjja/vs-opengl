@@ -24,7 +24,7 @@ public:
 	glm::quat rotation;
 
 	void lookAlong(const glm::vec3& direction, const glm::vec3& bais = FORWARD);
-	void lookAt(const glm::vec3& center, const glm::vec3& up = UP);
+	void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up = UP);
 	void rotate(const glm::quat& q);
 	void preRotate(const glm::quat& q);
 	glm::mat4 global(bool disable_scale = false) const;

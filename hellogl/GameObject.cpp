@@ -30,9 +30,9 @@ void GameObject::lookAlong(const glm::vec3& direction, const glm::vec3& bais)
     rotation = angleAxis(angle, axis);
 }
 
-void GameObject::lookAt(const glm::vec3& center, const glm::vec3& up)
+void GameObject::lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up)
 {
-    glm::mat4 m = glm::lookAt(position, center, normalize(up));
+    glm::mat4 m = inverse(glm::lookAt(eye, center, normalize(up)));
     position = m[3];
     rotation = glm::quat(m);
 }
