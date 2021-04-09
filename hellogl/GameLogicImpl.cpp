@@ -42,6 +42,14 @@ void GameLogicImpl::init()
     cube1->material = make_shared<Material>(vec3(1, 0, 0));
     scene.add(cube1);
 
+    shared_ptr<GameObject> child = make_shared<GameObject>();
+    child->position.y += 2;
+    child->scale *= 0.5;
+    child->mesh = mesh;
+    child->material = cube1->material;
+    child->setParent(cube1);
+    scene.add(child);
+
     shared_ptr<GameObject> cube2(new GameObject);
     cube2->position.x += 1.5;
     cube2->mesh = mesh;

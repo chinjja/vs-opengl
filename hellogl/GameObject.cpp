@@ -40,7 +40,18 @@ void GameObject::preRotate(const glm::quat& q)
     rotation = q * rotation;
 }
 
-glm::mat4 GameObject::matrix() const
+glm::mat4 GameObject::global() const
+{
+    const GameObject* cur = this;
+    glm::mat4 m = cur->local();
+    while (cur->parent()) {
+        cur = cur->parent().get();
+        m = cur->local() * m;
+    }
+    return m;
+}
+
+glm::mat4 GameObject::local() const
 {
     glm::mat4 ret(1);
     ret = glm::translate(ret, position);
@@ -62,4 +73,16 @@ glm::vec3 GameObject::right() const
 glm::vec3 GameObject::up() const
 {
     return rotation * glm::vec3(0, 1, 0);
+}
+
+void GameObject::setParent(std::shared_ptr<GameObject>& parent)
+{
+    assert(this->parent().get() == nullptr);
+    parent_ = parent;
+    parent->children_.push_back(this);
+}
+
+const std::shared_ptr<GameObject>& GameObject::parent() const
+{
+    return parent_;
 }

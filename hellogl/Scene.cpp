@@ -41,7 +41,7 @@ void Scene::render()
 	}
 	if(camera) {
 		shader->bind();
-		auto view = camera->matrix();
+		auto view = camera->global();
 		for (auto& it : lights) {
 			shader->setUniformValue("directionalLight.direction", it.second->forward());
 			shader->setUniformValue("directionalLight.intensity", it.first->intensity);
@@ -49,7 +49,7 @@ void Scene::render()
 		for (auto& it : meshes) {
 			it.first->bind();
 			for (auto& gameObj : it.second) {
-				auto model = gameObj->matrix();
+				auto model = gameObj->global();
 				if (gameObj->material) {
 					shader->setUniformValue("ambient", gameObj->material->ambient);
 				}
