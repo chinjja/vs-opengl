@@ -13,13 +13,18 @@
 class GameObject
 {
 public:
+	const static glm::vec3 FORWARD;
+	const static glm::vec3 RIGHT;
+	const static glm::vec3 UP;
+
+public:
 	GameObject();
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::quat rotation;
 
-	void lookAlong(const glm::vec3& direction, const glm::vec3& bais = glm::vec3(0, 0, -1));
-	void lookAt(const glm::vec3& center, const glm::vec3& up = glm::vec3(0, 1, 0));
+	void lookAlong(const glm::vec3& direction, const glm::vec3& bais = FORWARD);
+	void lookAt(const glm::vec3& center, const glm::vec3& up = UP);
 	void rotate(const glm::quat& q);
 	void preRotate(const glm::quat& q);
 	glm::mat4 global(bool disable_scale = false) const;

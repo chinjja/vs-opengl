@@ -9,6 +9,10 @@
 using namespace std;
 using namespace glm;
 
+const glm::vec3 GameObject::FORWARD = glm::vec3(0.0f, 0.0f, -1.0f);
+const glm::vec3 GameObject::RIGHT = glm::vec3(1.0f, 0.0f, 0.0f);
+const glm::vec3 GameObject::UP = glm::vec3(0.0f, 1.0f, 0.0f);
+
 GameObject::GameObject()
     : position(0, 0, 0),
     scale(1, 1, 1),
@@ -70,17 +74,17 @@ glm::mat4 GameObject::local(bool disable_scale) const
 
 glm::vec3 GameObject::forward() const
 {
-    return rotation * glm::vec3(0, 0, -1);
+    return rotation * FORWARD;
 }
 
 glm::vec3 GameObject::right() const
 {
-    return rotation * glm::vec3(1, 0, 0);
+    return rotation * RIGHT;
 }
 
 glm::vec3 GameObject::up() const
 {
-    return rotation * glm::vec3(0, 1, 0);
+    return rotation * UP;
 }
 
 GameObject* GameObject::parent() const
