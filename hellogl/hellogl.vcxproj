@@ -88,8 +88,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <ExecutablePath>C:\Libraries\glew-2.1.0\include;C:\Libraries\glfw-3.3.3\include;C:\Libraries\glm;$(ExecutablePath)</ExecutablePath>
+    <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <LibraryPath>C:\Libraries\glfw-3.3.3\lib-static-ucrt;C:\Libraries\glew-2.1.0\lib\Release\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Libraries\glew-2.1.0\include;C:\Libraries\glfw-3.3.3\include;C:\Libraries\glm;C:\Libraries\stb-master;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,7 +140,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
