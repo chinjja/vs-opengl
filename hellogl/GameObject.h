@@ -17,7 +17,7 @@ public:
 	glm::vec3 scale;
 	glm::quat rotation;
 
-	void lookAlong(const glm::vec3& direction);
+	void lookAlong(const glm::vec3& direction, const glm::vec3& bais = glm::vec3(0, 0, -1));
 	void lookAt(const glm::vec3& center, const glm::vec3& up = glm::vec3(0, 1, 0));
 	void rotate(const glm::quat& q);
 	void preRotate(const glm::quat& q);

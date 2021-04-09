@@ -14,17 +14,18 @@ GameObject::GameObject()
 {
 }
 
-void GameObject::lookAlong(const glm::vec3& direction)
+void GameObject::lookAlong(const glm::vec3& direction, const glm::vec3& bais)
 {
-    vec3 bias(0, 0, -1);
-    float angle = acosf(dot(bias, direction));
-    vec3 axis = cross(bias, direction);
+    vec3 b = normalize(bais);
+    vec3 v = normalize(direction);
+    float angle = acosf(dot(b, v));
+    vec3 axis = cross(b, v);
     rotation = angleAxis(angle, axis);
 }
 
 void GameObject::lookAt(const glm::vec3& center, const glm::vec3& up)
 {
-    glm::mat4 m = glm::lookAt(position, center, up);
+    glm::mat4 m = glm::lookAt(position, center, normalize(up));
     position = m[3];
     rotation = glm::quat(m);
 }
