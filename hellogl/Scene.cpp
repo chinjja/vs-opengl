@@ -1,4 +1,6 @@
 #include <unordered_map>
+#include <vector>
+#include <algorithm>
 
 #include "Shader.h"
 #include "GameObject.h"
@@ -8,6 +10,8 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Material.h"
+
+using namespace std;
 
 void Scene::add(const std::shared_ptr<GameObject>& obj)
 {
@@ -25,18 +29,24 @@ void Scene::remove(const std::shared_ptr<GameObject>& obj)
 void Scene::render()
 {
 	GameObject* camera = nullptr;
-	std::unordered_map<Mesh*, std::vector<GameObject*>> meshes;
-	std::vector<std::pair<Light*, GameObject*>> lights;
-	for (auto& obj : gameObjects_) {
-		auto gameObj = obj.get();
-		if (obj->mesh) {
-			meshes[obj->mesh.get()].push_back(gameObj);
-		}
-		if (obj->light) {
-			lights.push_back(std::make_pair(obj->light.get(), gameObj));
-		}
-		if (obj->camera) {
-			camera = gameObj;
+	unordered_map<Mesh*, vector<GameObject*>> meshes;
+	vector<pair<Light*, GameObject*>> lights;
+	vector<GameObject*> children;
+	for (auto& root : gameObjects_) {
+		auto gameObj = root.get();
+		children.clear();
+		gameObj->getChildren(children);
+		children.push_back(gameObj);
+		for(auto child : children) {
+			if (child->mesh) {
+				meshes[child->mesh.get()].push_back(child);
+			}
+			if (child->light) {
+				lights.push_back(make_pair(child->light.get(), child));
+			}
+			if (child->camera) {
+				camera = child;
+			}
 		}
 	}
 	if(camera) {

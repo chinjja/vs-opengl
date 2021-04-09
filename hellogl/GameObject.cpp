@@ -4,6 +4,9 @@
 #include "Camera.h"
 #include "Texture.h"
 
+#include <algorithm>
+
+using namespace std;
 using namespace glm;
 
 GameObject::GameObject()
@@ -40,23 +43,28 @@ void GameObject::preRotate(const glm::quat& q)
     rotation = q * rotation;
 }
 
-glm::mat4 GameObject::global() const
+glm::mat4 GameObject::global(bool disable_scale) const
 {
     const GameObject* cur = this;
-    glm::mat4 m = cur->local();
+    glm::mat4 m = cur->local(disable_scale);
     while (cur->parent()) {
-        cur = cur->parent().get();
-        m = cur->local() * m;
+		cur = cur->parent();
+        m = cur->local(disable_scale) * m;
     }
     return m;
 }
 
-glm::mat4 GameObject::local() const
+glm::mat4 GameObject::local(bool disable_scale) const
 {
+	glm::vec3 factor(1, 1, 1);
+	if(!disable_scale && parent()) {
+		factor = 1.0f / parent()->scale;
+	}
     glm::mat4 ret(1);
-    ret = glm::translate(ret, position);
+	ret = translate(ret, position * factor);
     ret *= mat4_cast(rotation);
-    ret = glm::scale(ret, scale);
+	if(!disable_scale)
+		ret = glm::scale(ret, scale);
     return ret;
 }
 
@@ -75,14 +83,37 @@ glm::vec3 GameObject::up() const
     return rotation * glm::vec3(0, 1, 0);
 }
 
-void GameObject::setParent(std::shared_ptr<GameObject>& parent)
-{
-    assert(this->parent().get() == nullptr);
-    parent_ = parent;
-    parent->children_.push_back(this);
-}
-
-const std::shared_ptr<GameObject>& GameObject::parent() const
+GameObject* GameObject::parent() const
 {
     return parent_;
+}
+
+void GameObject::getChildren(std::vector<GameObject *> &result, bool recursive) {
+	for(auto child : children_) {
+		if(recursive && !child->children_.empty()) {
+			child->getChildren(result, recursive);
+		}
+		result.push_back(child.get());
+	}
+}
+
+bool GameObject::removeChild(std::shared_ptr<GameObject> &child) {
+	if(child.get() == this || child->parent_ != this) return false;
+	
+	auto it = find(children_.begin(), children_.end(), child);
+	if(it != children_.end())
+		children_.erase(it);
+	return true;
+}
+
+
+bool GameObject::addChild(std::shared_ptr<GameObject> &child) {
+	if(child.get() == this || child->parent_ == this) return false;
+	
+	if(child->parent_) {
+		child->parent_->removeChild(child);
+	}
+	child->parent_ = this;
+	children_.push_back(child);
+	return true;
 }

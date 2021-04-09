@@ -36,33 +36,55 @@ void GameLogicImpl::init()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    shared_ptr<Material> white = make_shared<Material>(vec3(1, 1, 1));
+	shared_ptr<Material> red = make_shared<Material>(vec3(1, 0, 0));
+	shared_ptr<Material> blue = make_shared<Material>(vec3(0, 0, 1));
+	
     cube1 = make_shared<GameObject>();
     cube1->position.x -= 1.5;
     cube1->mesh = mesh;
-    cube1->material = make_shared<Material>(vec3(1, 0, 0));
+	cube1->material = white;
     scene.add(cube1);
 
-    shared_ptr<GameObject> child = make_shared<GameObject>();
-    child->position.y += 2;
-    child->scale *= 0.5;
-    child->mesh = mesh;
-    child->material = cube1->material;
-    child->setParent(cube1);
-    scene.add(child);
+    shared_ptr<GameObject> child1 = make_shared<GameObject>();
+    child1->position.y += 3;
+    child1->scale *= 0.5;
+    child1->mesh = mesh;
+	child1->material = white;
+	cube1->addChild(child1);
+	
+	shared_ptr<GameObject> child2 = make_shared<GameObject>();
+	child2->position.y += 3;
+	child2->scale *= 0.5;
+	child2->mesh = mesh;
+	child2->material = red;
+	child1->addChild(child2);
 
-    shared_ptr<GameObject> cube2(new GameObject);
+    shared_ptr<GameObject> cube2 = make_shared<GameObject>();
     cube2->position.x += 1.5;
     cube2->mesh = mesh;
-    cube2->material = make_shared<Material>(vec3(1, 1, 1));
+	cube2->material = blue;
     scene.add(cube2);
+	
+	shared_ptr<GameObject> child3 = make_shared<GameObject>();
+	child3->position.y += 3;
+	child3->mesh = mesh;
+	child3->material = blue;
+	cube2->addChild(child3);
+	
+	shared_ptr<GameObject> child4 = make_shared<GameObject>();
+	child4->position.y += 3;
+	child4->mesh = mesh;
+	child4->material = blue;
+	child3->addChild(child4);
 
     camera = make_shared<GameObject>();
-    camera->position.z += 8;
-    camera->lookAt(vec3(0, 0, 0), vec3(0, 1, 0));
+	camera->position += vec3(0, 2, 12);
+    camera->lookAt(vec3(0, 2, 0), vec3(0, 1, 0));
     camera->camera = make_shared<Camera>();
     scene.add(camera);
 
-    shared_ptr<GameObject> light(new GameObject);
+    shared_ptr<GameObject> light = make_shared<GameObject>();
     light->lookAlong(vec3(0, -1, -1));
     light->light = make_shared<Light>(1);
     scene.add(light);
