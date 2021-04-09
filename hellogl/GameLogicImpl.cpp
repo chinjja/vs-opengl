@@ -88,7 +88,7 @@ void GameLogicImpl::init()
 
 	auto light = make_shared<GameObject>();
     light->lookAlong(vec3(0, -1, -1));
-    light->light = make_shared<Light>(1);
+    light->light = make_shared<Light>();
     scene.add(light);
 	
 	auto camera = make_shared<GameObject>();

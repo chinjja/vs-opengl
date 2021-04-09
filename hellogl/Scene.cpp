@@ -1,6 +1,4 @@
 #include <unordered_map>
-#include <vector>
-#include <algorithm>
 
 #include "Shader.h"
 #include "GameObject.h"
@@ -42,7 +40,7 @@ void Scene::render()
 				meshes[child->mesh.get()].push_back(child);
 			}
 			if (child->light) {
-				lights.push_back(make_pair(child->light.get(), child));
+				lights.push_back(std::make_pair(child->light.get(), child));
 			}
 			if (child->camera) {
 				camera = child;
@@ -51,17 +49,22 @@ void Scene::render()
 	}
 	if(camera) {
 		shader->bind();
-		auto view = inverse(camera->global());
+		auto view = inverse(camera->global(true));
+		shader->setUniformValue("cameraVertex", camera->position);
 		for (auto& it : lights) {
 			shader->setUniformValue("directionalLight.direction", it.second->forward());
 			shader->setUniformValue("directionalLight.intensity", it.first->intensity);
+			shader->setUniformValue("directionalLight.color", it.first->color);
 		}
 		for (auto& it : meshes) {
 			it.first->bind();
 			for (auto& gameObj : it.second) {
 				auto model = gameObj->global();
 				if (gameObj->material) {
-					shader->setUniformValue("ambient", gameObj->material->ambient);
+					shader->setUniformValue("material.ambient", gameObj->material->ambient);
+					shader->setUniformValue("material.diffuse", gameObj->material->diffuse);
+					shader->setUniformValue("material.specular", gameObj->material->specular);
+					shader->setUniformValue("material.reflectance", gameObj->material->reflectance);
 				}
 				shader->setUniformValue("M", model);
 				shader->setUniformValue("MVP", projection * view * model);

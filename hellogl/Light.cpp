@@ -1,6 +1,6 @@
 #include "Light.h"
 
-Light::Light(float intensity)
-	: intensity(intensity)
+Light::Light(const glm::vec4& color, float intensity)
+	: color(color), intensity(intensity)
 {
 }
