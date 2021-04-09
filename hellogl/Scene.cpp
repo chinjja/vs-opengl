@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Material.h"
 
 void Scene::add(const std::shared_ptr<GameObject>& obj)
 {
@@ -49,8 +50,8 @@ void Scene::render()
 			it.first->bind();
 			for (auto& gameObj : it.second) {
 				auto model = gameObj->matrix();
-				if (gameObj->texture) {
-					shader->setUniformValue("ambient", gameObj->texture->ambient);
+				if (gameObj->material) {
+					shader->setUniformValue("ambient", gameObj->material->ambient);
 				}
 				shader->setUniformValue("M", model);
 				shader->setUniformValue("MVP", projection * view * model);

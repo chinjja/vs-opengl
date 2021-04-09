@@ -39,13 +39,13 @@ void GameLogicImpl::init()
     cube1 = make_shared<GameObject>();
     cube1->position.x -= 1.5;
     cube1->mesh = mesh;
-    cube1->texture = make_shared<Texture>(vec3(1, 0, 0));
+    cube1->material = make_shared<Material>(vec3(1, 0, 0));
     scene.add(cube1);
 
     shared_ptr<GameObject> cube2(new GameObject);
     cube2->position.x += 1.5;
     cube2->mesh = mesh;
-    cube2->texture = make_shared<Texture>(vec3(1, 1, 1));
+    cube2->material = make_shared<Material>(vec3(1, 1, 1));
     scene.add(cube2);
 
     camera = make_shared<GameObject>();

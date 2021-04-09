@@ -7,6 +7,7 @@
 #include "Light.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "Material.h"
 
 class GameObject
 {
@@ -27,6 +28,6 @@ public:
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Light> light;
 	std::shared_ptr<Camera> camera;
-	std::shared_ptr<Texture> texture;
+	std::shared_ptr<Material> material;
 };
 
