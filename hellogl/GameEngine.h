@@ -7,6 +7,7 @@ class GameEngine
 {
 public:
 	GameEngine(std::shared_ptr<GameLogic>& logic, int width = 640, int height = 480);
+	void updateMods(int mods);
 
 private:
 	void render();

@@ -48,7 +48,7 @@ void GameLogicImpl::init()
     cube2->texture = make_shared<Texture>(vec3(1, 1, 1));
     scene.add(cube2);
 
-    shared_ptr<GameObject> camera(new GameObject);
+    camera = make_shared<GameObject>();
     camera->position.z += 8;
     camera->lookAt(vec3(0, 0, 0), vec3(0, 1, 0));
     camera->camera = make_shared<Camera>();
@@ -62,11 +62,18 @@ void GameLogicImpl::init()
 
 void GameLogicImpl::update()
 {
+    if (input().mousePressed(GLFW_MOUSE_BUTTON_2)) {
+        vec2 pos = input().mouseDeltaPos() * delta_time;
+        if (input().altPressed()) {
+            quat rot({ 0, 0, pos.x + pos.y });
+            camera->preRotate(rot);
+        }
+        else {
+            quat rot({ pos.y, pos.x, 0 });
+            camera->preRotate(rot);
+        }
+    }
     scene.projection = perspective(radians(60.0f), width / height, 0.1f, 10.0f);
     cube1->preRotate(vec3(0, radians(30.0f) * delta_time, 0));
     scene.render();
-}
-
-void GameLogicImpl::input()
-{
 }

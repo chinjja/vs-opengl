@@ -157,6 +157,7 @@
     <ClCompile Include="GameLogicImpl.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="hellogl.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameLogicImpl.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ObjectLoader.h" />

@@ -15,6 +15,7 @@
 #include "Light.h"
 #include "GameEngine.h"
 #include "GameLogic.h"
+#include "Input.h"
 
 using namespace std;
 using namespace glm;
@@ -48,6 +49,8 @@ GameEngine::GameEngine(std::shared_ptr<GameLogic>& logic, int w, int h)
     glfwSetKeyCallback(window_, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
             glfwSetWindowShouldClose(window, GLFW_TRUE);
+        GameEngine* engine = static_cast<GameEngine*>(glfwGetWindowUserPointer(window));
+        if (engine) engine->updateMods(mods);
     });
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int w, int h) {
         GameEngine* engine = static_cast<GameEngine*>(glfwGetWindowUserPointer(window));
@@ -69,16 +72,26 @@ GameEngine::GameEngine(std::shared_ptr<GameLogic>& logic, int w, int h)
     glfwSwapInterval(1);
 
     logic_->init();
+    logic_->input_ = Input(window_);
+    logic_->input_.updateMousePos();
     prev_time_ = glfwGetTime();
 
     while (!glfwWindowShouldClose(window_))
     {
+        logic_->input_.updateMousePos();
         render();
         glfwPollEvents();
     }
 
     glfwDestroyWindow(window_);
     glfwTerminate();
+}
+
+void GameEngine::updateMods(int mods)
+{
+    logic_->input_.shift_ = (mods & GLFW_MOD_SHIFT) == GLFW_MOD_SHIFT;
+    logic_->input_.ctrl_ = (mods & GLFW_MOD_CONTROL) == GLFW_MOD_CONTROL;
+    logic_->input_.alt_ = (mods & GLFW_MOD_ALT) == GLFW_MOD_ALT;
 }
 
 void GameEngine::render()
