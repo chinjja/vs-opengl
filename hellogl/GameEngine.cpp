@@ -19,23 +19,12 @@
 using namespace std;
 using namespace glm;
 
-static void error_callback(int error, const char* description)
-{
-    fprintf(stderr, "Error: %s\n", description);
-}
-
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
-
 GameEngine::GameEngine(std::shared_ptr<GameLogic>& logic, int w, int h)
     : logic_(logic)
 {
-    GLFWwindow* window;
-
-    glfwSetErrorCallback(error_callback);
+    glfwSetErrorCallback([](int error, const char* description) {
+        fprintf(stderr, "Error: %s\n", description);
+    });
     if (!glfwInit())
     {
         cerr << "glfw fail" << endl;
@@ -47,16 +36,29 @@ GameEngine::GameEngine(std::shared_ptr<GameLogic>& logic, int w, int h)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    window = glfwCreateWindow(w, h, "Simple example", NULL, NULL);
-    if (!window)
+    window_ = glfwCreateWindow(w, h, "Simple example", NULL, NULL);
+    if (!window_)
     {
         glfwTerminate();
         std::exit(EXIT_FAILURE);
     }
 
-    glfwSetKeyCallback(window, key_callback);
+    glfwSetWindowUserPointer(window_, this);
 
-    glfwMakeContextCurrent(window);
+    glfwSetKeyCallback(window_, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+    });
+    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int w, int h) {
+        GameEngine* engine = static_cast<GameEngine*>(glfwGetWindowUserPointer(window));
+        if (engine) engine->render();
+    });
+    glfwSetWindowPosCallback(window_, [](GLFWwindow* window, int x, int y) {
+        GameEngine* engine = static_cast<GameEngine*>(glfwGetWindowUserPointer(window));
+        if (engine) engine->render();
+    });
+
+    glfwMakeContextCurrent(window_);
 
     GLenum error = glewInit();
     if (error != GLEW_OK) {
@@ -67,33 +69,37 @@ GameEngine::GameEngine(std::shared_ptr<GameLogic>& logic, int w, int h)
     glfwSwapInterval(1);
 
     logic_->init();
+    prev_time_ = glfwGetTime();
 
-    float prev_time = glfwGetTime();
-
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window_))
     {
-        float cur_time = glfwGetTime();
-        float delta_time = cur_time - prev_time;
-        prev_time = cur_time;
-
-        int width, height;
-
-        glfwGetFramebufferSize(window, &width, &height);
-
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        logic_->width = width;
-        logic_->height = height;
-        logic_->time = cur_time;
-        logic_->delta_time = delta_time;
-        logic_->input();
-        logic_->update();
-
-        glfwSwapBuffers(window);
+        render();
         glfwPollEvents();
     }
 
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(window_);
     glfwTerminate();
+}
+
+void GameEngine::render()
+{
+    float cur_time = glfwGetTime();
+    float delta_time = cur_time - prev_time_;
+    prev_time_ = cur_time;
+
+    int width, height;
+
+    glfwGetFramebufferSize(window_, &width, &height);
+
+    glViewport(0, 0, width, height);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    logic_->width = width;
+    logic_->height = height;
+    logic_->time = cur_time;
+    logic_->delta_time = delta_time;
+    logic_->input();
+    logic_->update();
+
+    glfwSwapBuffers(window_);
 }
