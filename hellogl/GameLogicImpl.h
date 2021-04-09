@@ -14,6 +14,7 @@ protected:
 private:
     Scene scene;
     std::shared_ptr<GameObject> cube1;
-    std::shared_ptr<GameObject> camera;
+	std::shared_ptr<GameObject> head;
+    std::shared_ptr<GameObject> player;
 };
 
