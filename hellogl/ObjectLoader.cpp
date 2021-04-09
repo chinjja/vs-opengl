@@ -13,8 +13,7 @@ using namespace glm;
 
 bool ObjectLoader::load(const char* filename, std::vector<glm::vec3>& vertex_data, std::vector<glm::vec3>& normal_data, std::vector<glm::vec2>& uv_data)
 {
-    FILE* file;
-    fopen_s(&file, filename, "r");
+    FILE* file = fopen(filename, "r");
     if (!file) {
         cout << "can't open file: " << filename << endl;
         return false;

@@ -48,8 +48,7 @@ bool Shader::addFragmentShaderCode(const char* code)
 
 bool Shader::addShaderFile(GLenum type, const char* filename)
 {
-	FILE* file;
-	fopen_s(&file, filename, "r");
+	FILE* file = fopen(filename, "r");
 	if (!file) {
 		std::cout << "can't open file: " << filename << std::endl;
 		return false;
@@ -60,6 +59,7 @@ bool Shader::addShaderFile(GLenum type, const char* filename)
 		int len = fread(buf, 1, sizeof(buf), file);
 		source += std::string(buf, len);
 	}
+	fclose(file);
 	return addShaderCode(type, source.c_str());
 }
 
