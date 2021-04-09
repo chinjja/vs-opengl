@@ -20,10 +20,10 @@ Texture::Texture(int width, int height, GLenum pixelFormat)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-Texture::Texture(const char* filename)
+Texture::Texture(const std::string& filename)
 {
 	int channels;
-	stbi_uc* data = stbi_load(filename, &width_, &height_, &channels, 0);
+	stbi_uc* data = stbi_load(filename.c_str(), &width_, &height_, &channels, 0);
 	if (!data) {
 		throw std::exception(("can't load image: " + std::string(filename)).c_str());
 	}

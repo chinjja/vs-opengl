@@ -17,11 +17,12 @@ Shader::~Shader()
 	glDeleteProgram(id_);
 }
 
-bool Shader::addShaderCode(GLenum type, const char* code)
+bool Shader::addShaderCode(GLenum type, const std::string& code)
 {
 	GLint st;
 	GLuint shader = glCreateShader(type);
-	glShaderSource(shader, 1, &code, NULL);
+	const char* str = code.c_str();
+	glShaderSource(shader, 1, &str, NULL);
 	glCompileShader(shader);
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &st);
 	if (!st) {
@@ -36,19 +37,19 @@ bool Shader::addShaderCode(GLenum type, const char* code)
 	return st;
 }
 
-bool Shader::addVertexShaderCode(const char* code)
+bool Shader::addVertexShaderCode(const std::string& code)
 {
 	return addShaderCode(GL_VERTEX_SHADER, code);
 }
 
-bool Shader::addFragmentShaderCode(const char* code)
+bool Shader::addFragmentShaderCode(const std::string& code)
 {
 	return addShaderCode(GL_FRAGMENT_SHADER, code);
 }
 
-bool Shader::addShaderFile(GLenum type, const char* filename)
+bool Shader::addShaderFile(GLenum type, const std::string& filename)
 {
-	FILE* file = fopen(filename, "r");
+	FILE* file = fopen(filename.c_str(), "r");
 	if (!file) {
 		std::cout << "can't open file: " << filename << std::endl;
 		return false;
@@ -63,12 +64,12 @@ bool Shader::addShaderFile(GLenum type, const char* filename)
 	return addShaderCode(type, source.c_str());
 }
 
-bool Shader::addVertexShaderFile(const char* filename)
+bool Shader::addVertexShaderFile(const std::string& filename)
 {
 	return addShaderFile(GL_VERTEX_SHADER, filename);
 }
 
-bool Shader::addFragmentShaderFile(const char* filename)
+bool Shader::addFragmentShaderFile(const std::string& filename)
 {
 	return addShaderFile(GL_FRAGMENT_SHADER, filename);
 }
@@ -97,12 +98,12 @@ void Shader::release()
 	glUseProgram(0);
 }
 
-GLint Shader::uniformLocation(const char* name)
+GLint Shader::uniformLocation(const std::string& name)
 {
 	GLint location;
 	auto it = locations_.find(name);
 	if (it == locations_.end()) {
-		location = glGetUniformLocation(id_, name);
+		location = glGetUniformLocation(id_, name.c_str());
 		assert(location >= 0);
 		locations_[name] = location;
 	}
@@ -112,12 +113,12 @@ GLint Shader::uniformLocation(const char* name)
 	return location;
 }
 
-GLint Shader::attribLocation(const char* name)
+GLint Shader::attribLocation(const std::string& name)
 {
 	GLint attrib;
 	auto it = attrib_.find(name);
 	if (it == attrib_.end()) {
-		attrib = glGetAttribLocation(id_, name);
+		attrib = glGetAttribLocation(id_, name.c_str());
 		assert(attrib >= 0);
 		attrib_[name] = attrib;
 	}
@@ -127,27 +128,27 @@ GLint Shader::attribLocation(const char* name)
 	return attrib;
 }
 
-void Shader::setUniformValue(const char* name, const glm::mat4& mat)
+void Shader::setUniformValue(const std::string& name, const glm::mat4& mat)
 {
 	setUniformValue(uniformLocation(name), mat);
 }
 
-void Shader::setUniformValue(const char* name, float scalar)
+void Shader::setUniformValue(const std::string& name, float scalar)
 {
 	setUniformValue(uniformLocation(name), scalar);
 }
 
-void Shader::setUniformValue(const char* name, const glm::vec2& vec)
+void Shader::setUniformValue(const std::string& name, const glm::vec2& vec)
 {
 	setUniformValue(uniformLocation(name), vec);
 }
 
-void Shader::setUniformValue(const char* name, const glm::vec3& vec)
+void Shader::setUniformValue(const std::string& name, const glm::vec3& vec)
 {
 	setUniformValue(uniformLocation(name), vec);
 }
 
-void Shader::setUniformValue(const char* name, const glm::vec4& vec)
+void Shader::setUniformValue(const std::string& name, const glm::vec4& vec)
 {
 	setUniformValue(uniformLocation(name), vec);
 }

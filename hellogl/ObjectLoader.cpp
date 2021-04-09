@@ -11,9 +11,9 @@
 using namespace std;
 using namespace glm;
 
-bool ObjectLoader::load(const char* filename, std::vector<glm::vec3>& vertex_data, std::vector<glm::vec3>& normal_data, std::vector<glm::vec2>& uv_data)
+bool ObjectLoader::load(const std::string& filename, std::vector<glm::vec3>& vertex_data, std::vector<glm::vec3>& normal_data, std::vector<glm::vec2>& uv_data)
 {
-    FILE* file = fopen(filename, "r");
+    FILE* file = fopen(filename.c_str(), "r");
     if (!file) {
         cout << "can't open file: " << filename << endl;
         return false;
@@ -96,7 +96,7 @@ bool ObjectLoader::load(const char* filename, std::vector<glm::vec3>& vertex_dat
     return true;
 }
 
-shared_ptr<Mesh> ObjectLoader::load(const char* filename)
+shared_ptr<Mesh> ObjectLoader::load(const std::string& filename)
 {
     vector<vec3> vertex;
     vector<vec2> uv;

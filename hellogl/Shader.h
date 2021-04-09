@@ -13,23 +13,23 @@ public:
 	Shader();
 	~Shader();
 
-	bool addShaderCode(GLenum type, const char* code);
-	bool addVertexShaderCode(const char* code);
-	bool addFragmentShaderCode(const char* code);
-	bool addShaderFile(GLenum type, const char* filename);
-	bool addVertexShaderFile(const char* filename);
-	bool addFragmentShaderFile(const char* filename);
+	bool addShaderCode(GLenum type, const std::string& code);
+	bool addVertexShaderCode(const std::string& code);
+	bool addFragmentShaderCode(const std::string& code);
+	bool addShaderFile(GLenum type, const std::string& filename);
+	bool addVertexShaderFile(const std::string& filename);
+	bool addFragmentShaderFile(const std::string& filename);
 	bool link();
 	void bind();
 	void release();
 
-	GLint uniformLocation(const char* name);
-	GLint attribLocation(const char* name);
-	void setUniformValue(const char* name, const glm::mat4& mat);
-	void setUniformValue(const char* name, float scalar);
-	void setUniformValue(const char* name, const glm::vec2& vec);
-	void setUniformValue(const char* name, const glm::vec3& vec);
-	void setUniformValue(const char* name, const glm::vec4& vec);
+	GLint uniformLocation(const std::string& name);
+	GLint attribLocation(const std::string& name);
+	void setUniformValue(const std::string& name, const glm::mat4& mat);
+	void setUniformValue(const std::string& name, float scalar);
+	void setUniformValue(const std::string& name, const glm::vec2& vec);
+	void setUniformValue(const std::string& name, const glm::vec3& vec);
+	void setUniformValue(const std::string& name, const glm::vec4& vec);
 	void setUniformValue(GLint location, const glm::mat4& mat);
 	void setUniformValue(GLint location, float scalar);
 	void setUniformValue(GLint location, const glm::vec2& vec);
