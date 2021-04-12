@@ -64,12 +64,8 @@ glm::mat4 GameObject::global(bool disable_scale) const
 
 glm::mat4 GameObject::local(bool disable_scale) const
 {
-	glm::vec3 factor(1, 1, 1);
-	if(!disable_scale && parent()) {
-		factor = 1.0f / parent()->scale;
-	}
     glm::mat4 ret(1);
-	ret = translate(ret, position * factor);
+	ret = translate(ret, position);
     ret *= mat4_cast(rotation);
 	if(!disable_scale)
 		ret = glm::scale(ret, scale);
