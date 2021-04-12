@@ -27,7 +27,7 @@ void GameLogicImpl::init()
 
     scene.shader = shader;
 
-    auto mesh = ObjectLoader::load("cube.obj");
+    auto mesh = ObjectLoader::load("models/cube.obj");
     if (!mesh) {
         cerr << "obj load fail" << endl;
         std::exit(EXIT_FAILURE);
