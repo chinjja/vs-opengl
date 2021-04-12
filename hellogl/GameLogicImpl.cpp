@@ -36,10 +36,10 @@ void GameLogicImpl::init()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-	auto white = make_shared<Material>(vec3(1, 1, 1));
-	auto red = make_shared<Material>(vec3(1, 0, 0));
-	auto green = make_shared<Material>(vec3(0, 1, 0));
-	auto blue = make_shared<Material>(vec3(0, 0, 1));
+	auto white = make_shared<Material>(vec4(1, 1, 1, 1));
+	auto red = make_shared<Material>(vec4(1, 0, 0, 1));
+	auto green = make_shared<Material>(vec4(0, 1, 0, 1));
+	auto blue = make_shared<Material>(vec4(0, 0, 1, 1));
 	
     cube1 = make_shared<GameObject>();
     cube1->position.x -= 1.5;

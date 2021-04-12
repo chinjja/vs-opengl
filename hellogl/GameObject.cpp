@@ -17,7 +17,11 @@ GameObject::GameObject()
     : position(0, 0, 0),
     scale(1, 1, 1),
     rotation(1, 0, 0, 0),
-    mesh(nullptr)
+    mesh(nullptr),
+	light(nullptr),
+	camera(nullptr),
+	material(nullptr),
+	parent_(nullptr)
 {
 }
 
@@ -93,7 +97,7 @@ GameObject* GameObject::parent() const
 }
 
 void GameObject::getChildren(std::vector<GameObject *> &result, bool recursive) {
-	for(auto child : children_) {
+	for(auto& child : children_) {
 		if(recursive && !child->children_.empty()) {
 			child->getChildren(result, recursive);
 		}
