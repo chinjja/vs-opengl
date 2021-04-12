@@ -96,7 +96,7 @@ std::weak_ptr<GameObject> GameObject::parent() const
     return parent_;
 }
 
-void GameObject::getChildren(std::vector<std::weak_ptr<GameObject>> &result, bool recursive) {
+void GameObject::getChildren(std::vector<std::shared_ptr<GameObject>> &result, bool recursive) {
 	for(auto& child : children_) {
 		if(recursive && !child->children_.empty()) {
 			child->getChildren(result, recursive);

@@ -27,25 +27,22 @@ void Scene::remove(const std::shared_ptr<GameObject>& obj)
 void Scene::render()
 {
 	shared_ptr<GameObject> camera;
-	unordered_map<shared_ptr<Mesh>, vector<weak_ptr<GameObject>>> meshes;
-	vector<pair<shared_ptr<Light>, weak_ptr<GameObject>>> lights;
-	vector<weak_ptr<GameObject>> children;
+	unordered_map<shared_ptr<Mesh>, vector<shared_ptr<GameObject>>> meshes;
+	vector<pair<shared_ptr<Light>, shared_ptr<GameObject>>> lights;
+	vector<shared_ptr<GameObject>> children;
 	for (auto& root : gameObjects_) {
 		children.clear();
 		root->getChildren(children);
 		children.push_back(root);
 		for(auto& child : children) {
-			if (child.expired()) continue;
-
-			auto obj = child.lock();
-			if (obj->mesh) {
-				meshes[obj->mesh].push_back(obj);
+			if (child->mesh) {
+				meshes[child->mesh].push_back(child);
 			}
-			if (obj->light) {
-				lights.push_back(std::make_pair(obj->light, obj));
+			if (child->light) {
+				lights.push_back(std::make_pair(child->light, child));
 			}
-			if (obj->camera) {
-				camera = obj;
+			if (child->camera) {
+				camera = child;
 			}
 		}
 	}
@@ -55,7 +52,7 @@ void Scene::render()
 		shader->setUniformValue("cameraVertex", camera->position);
 		for (auto& it : lights) {
 			auto& light = it.first;
-			auto obj = it.second.lock();
+			auto& obj = it.second;
 			shader->setUniformValue("directionalLight.direction", obj->forward());
 			shader->setUniformValue("directionalLight.intensity", light->intensity);
 			shader->setUniformValue("directionalLight.color", light->color);
@@ -63,8 +60,7 @@ void Scene::render()
 		for (auto& it : meshes) {
 			auto& mesh = it.first;
 			mesh->bind();
-			for (auto& gameObj : it.second) {
-				auto obj = gameObj.lock();
+			for (auto& obj : it.second) {
 				auto model = obj->global();
 				if (obj->material) {
 					shader->setUniformValue("material.ambient", obj->material->ambient);

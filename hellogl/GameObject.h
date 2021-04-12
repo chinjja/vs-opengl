@@ -41,7 +41,7 @@ public:
 	bool removeChild(std::shared_ptr<GameObject>& child);
 	std::weak_ptr<GameObject> parent() const;
 	
-	void getChildren(std::vector<std::weak_ptr<GameObject>>& result, bool recusive = true);
+	void getChildren(std::vector<std::shared_ptr<GameObject>>& result, bool recusive = true);
 private:
 	GameObject();
 	std::weak_ptr<GameObject> parent_;
