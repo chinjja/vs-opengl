@@ -26,24 +26,26 @@ void Scene::remove(const std::shared_ptr<GameObject>& obj)
 
 void Scene::render()
 {
-	GameObject* camera = nullptr;
-	unordered_map<Mesh*, vector<GameObject*>> meshes;
-	vector<pair<Light*, GameObject*>> lights;
-	vector<GameObject*> children;
+	shared_ptr<GameObject> camera;
+	unordered_map<shared_ptr<Mesh>, vector<weak_ptr<GameObject>>> meshes;
+	vector<pair<shared_ptr<Light>, weak_ptr<GameObject>>> lights;
+	vector<weak_ptr<GameObject>> children;
 	for (auto& root : gameObjects_) {
-		auto gameObj = root.get();
 		children.clear();
-		gameObj->getChildren(children);
-		children.push_back(gameObj);
-		for(auto child : children) {
-			if (child->mesh) {
-				meshes[child->mesh.get()].push_back(child);
+		root->getChildren(children);
+		children.push_back(root);
+		for(auto& child : children) {
+			if (child.expired()) continue;
+
+			auto obj = child.lock();
+			if (obj->mesh) {
+				meshes[obj->mesh].push_back(obj);
 			}
-			if (child->light) {
-				lights.push_back(std::make_pair(child->light.get(), child));
+			if (obj->light) {
+				lights.push_back(std::make_pair(obj->light, obj));
 			}
-			if (child->camera) {
-				camera = child;
+			if (obj->camera) {
+				camera = obj;
 			}
 		}
 	}
@@ -52,25 +54,29 @@ void Scene::render()
 		auto view = inverse(camera->global(true));
 		shader->setUniformValue("cameraVertex", camera->position);
 		for (auto& it : lights) {
-			shader->setUniformValue("directionalLight.direction", it.second->forward());
-			shader->setUniformValue("directionalLight.intensity", it.first->intensity);
-			shader->setUniformValue("directionalLight.color", it.first->color);
+			auto& light = it.first;
+			auto obj = it.second.lock();
+			shader->setUniformValue("directionalLight.direction", obj->forward());
+			shader->setUniformValue("directionalLight.intensity", light->intensity);
+			shader->setUniformValue("directionalLight.color", light->color);
 		}
 		for (auto& it : meshes) {
-			it.first->bind();
+			auto& mesh = it.first;
+			mesh->bind();
 			for (auto& gameObj : it.second) {
-				auto model = gameObj->global();
-				if (gameObj->material) {
-					shader->setUniformValue("material.ambient", gameObj->material->ambient);
-					shader->setUniformValue("material.diffuse", gameObj->material->diffuse);
-					shader->setUniformValue("material.specular", gameObj->material->specular);
-					shader->setUniformValue("material.reflectance", gameObj->material->reflectance);
+				auto obj = gameObj.lock();
+				auto model = obj->global();
+				if (obj->material) {
+					shader->setUniformValue("material.ambient", obj->material->ambient);
+					shader->setUniformValue("material.diffuse", obj->material->diffuse);
+					shader->setUniformValue("material.specular", obj->material->specular);
+					shader->setUniformValue("material.reflectance", obj->material->reflectance);
 				}
 				shader->setUniformValue("M", model);
 				shader->setUniformValue("MVP", projection * view * model);
-				it.first->render();
+				mesh->render();
 			}
-			it.first->release();
+			mesh->release();
 		}
 		shader->release();
 	}

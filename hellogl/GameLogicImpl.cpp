@@ -41,68 +41,68 @@ void GameLogicImpl::init()
 	auto green = make_shared<Material>(vec4(0, 1, 0, 1));
 	auto blue = make_shared<Material>(vec4(0, 0, 1, 1));
 	
-    cube1 = make_shared<GameObject>();
+    cube1 = GameObject::create();
     cube1->position.x -= 1.5;
     cube1->mesh = mesh;
 	cube1->material = white;
     scene.add(cube1);
 
-	auto child1 = make_shared<GameObject>();
+	auto child1 = GameObject::create();
     child1->position.y += 3;
     child1->scale *= 0.5;
     child1->mesh = mesh;
 	child1->material = white;
 	cube1->addChild(child1);
 	
-	auto child2 = make_shared<GameObject>();
+	auto child2 = GameObject::create();
 	child2->position.y += 3;
 	child2->scale *= 0.5;
 	child2->mesh = mesh;
 	child2->material = red;
 	child1->addChild(child2);
 
-	auto cube2 = make_shared<GameObject>();
+	auto cube2 = GameObject::create();
     cube2->position.x += 1.5;
     cube2->mesh = mesh;
 	cube2->material = blue;
     scene.add(cube2);
 	
-	auto child3 = make_shared<GameObject>();
+	auto child3 = GameObject::create();
 	child3->position.y += 3;
 	child3->mesh = mesh;
 	child3->material = blue;
 	cube2->addChild(child3);
 	
-	auto child4 = make_shared<GameObject>();
+	auto child4 = GameObject::create();
 	child4->position.y += 3;
 	child4->mesh = mesh;
 	child4->material = blue;
 	child3->addChild(child4);
 	
-	auto plane = make_shared<GameObject>();
+	auto plane = GameObject::create();
 	plane->position.y += -1.2;
 	plane->scale = vec3(10, 0.1, 10);
 	plane->mesh = mesh;
 	plane->material = white;
 	scene.add(plane);
 
-	auto light = make_shared<GameObject>();
+	auto light = GameObject::create();
     light->lookAlong(vec3(0, -1, -1));
     light->light = make_shared<Light>();
     scene.add(light);
 	
-	auto camera = make_shared<GameObject>();
+	auto camera = GameObject::create();
 	camera->position.z = -0.5;
 	camera->camera = make_shared<Camera>();
 	
-	head = make_shared<GameObject>();
+	head = GameObject::create();
 	head->position.y += 1.1;
 	head->scale *= 0.5;
 	head->mesh = mesh;
 	head->material = green;
 	head->addChild(camera);
 	
-	player = make_shared<GameObject>();
+	player = GameObject::create();
 	player->position.z = 10;
 	player->scale *= vec3(0.5, 1, 0.5);
 	player->mesh = mesh;

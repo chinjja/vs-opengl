@@ -20,9 +20,13 @@ GameObject::GameObject()
     mesh(nullptr),
 	light(nullptr),
 	camera(nullptr),
-	material(nullptr),
-	parent_(nullptr)
+	material(nullptr)
 {
+}
+
+std::shared_ptr<GameObject> GameObject::create()
+{
+	return shared_ptr<GameObject>(new GameObject);
 }
 
 void GameObject::lookAlong(const glm::vec3& direction, const glm::vec3& bais)
@@ -53,10 +57,10 @@ void GameObject::preRotate(const glm::quat& q)
 
 glm::mat4 GameObject::global(bool disable_scale) const
 {
-    const GameObject* cur = this;
+	std::shared_ptr<const GameObject> cur = shared_from_this();
     glm::mat4 m = cur->local(disable_scale);
-    while (cur->parent()) {
-		cur = cur->parent();
+    while (!cur->parent().expired()) {
+		cur = cur->parent().lock();
         m = cur->local(disable_scale) * m;
     }
     return m;
@@ -87,37 +91,39 @@ glm::vec3 GameObject::up() const
     return rotation * UP;
 }
 
-GameObject* GameObject::parent() const
+std::weak_ptr<GameObject> GameObject::parent() const
 {
     return parent_;
 }
 
-void GameObject::getChildren(std::vector<GameObject *> &result, bool recursive) {
+void GameObject::getChildren(std::vector<std::weak_ptr<GameObject>> &result, bool recursive) {
 	for(auto& child : children_) {
 		if(recursive && !child->children_.empty()) {
 			child->getChildren(result, recursive);
 		}
-		result.push_back(child.get());
+		result.push_back(child);
 	}
 }
 
 bool GameObject::removeChild(std::shared_ptr<GameObject> &child) {
-	if(child.get() == this || child->parent_ != this) return false;
+	if(child.get() == this || child->parent_.lock().get() != this) return false;
 	
 	auto it = find(children_.begin(), children_.end(), child);
-	if(it != children_.end())
+	if (it != children_.end()) {
 		children_.erase(it);
+		(*it)->parent_.reset();
+	}
 	return true;
 }
 
 
 bool GameObject::addChild(std::shared_ptr<GameObject> &child) {
-	if(child.get() == this || child->parent_ == this) return false;
+	if(child.get() == this || child->parent_.lock().get() == this) return false;
 	
-	if(child->parent_) {
-		child->parent_->removeChild(child);
+	if(!child->parent_.expired()) {
+		parent_.lock()->removeChild(child);
 	}
-	child->parent_ = this;
+	child->parent_ = weak_from_this();
 	children_.push_back(child);
 	return true;
 }

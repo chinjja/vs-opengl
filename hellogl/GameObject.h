@@ -10,7 +10,7 @@
 #include "Texture.h"
 #include "Material.h"
 
-class GameObject
+class GameObject : public std::enable_shared_from_this<GameObject>
 {
 public:
 	const static glm::vec3 FORWARD;
@@ -18,7 +18,7 @@ public:
 	const static glm::vec3 UP;
 
 public:
-	GameObject();
+	static std::shared_ptr<GameObject> create();
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::quat rotation;
@@ -39,11 +39,12 @@ public:
 	
 	bool addChild(std::shared_ptr<GameObject>& child);
 	bool removeChild(std::shared_ptr<GameObject>& child);
-	GameObject* parent() const;
+	std::weak_ptr<GameObject> parent() const;
 	
-	void getChildren(std::vector<GameObject*>& result, bool recusive = true);
+	void getChildren(std::vector<std::weak_ptr<GameObject>>& result, bool recusive = true);
 private:
-	GameObject* parent_;
+	GameObject();
+	std::weak_ptr<GameObject> parent_;
 	std::vector<std::shared_ptr<GameObject>> children_;
 };
 
