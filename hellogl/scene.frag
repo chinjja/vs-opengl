@@ -28,5 +28,7 @@ void main()
 	vec3 to_camera_dir = normalize(cameraVertex - modelVertex);
 	float specular_factor = clamp(dot(to_camera_dir, reflected_light), 0, 1) * material.reflectance;
 	vec4 ambient = material.ambient * directionalLight.color;
+	ambient += material.diffuse * 0.01;
+	ambient += material.specular * 0.01;
 	fragColor = (ambient * 0.2 + ambient * factor + ambient * specular_factor) * directionalLight.intensity;
 }
