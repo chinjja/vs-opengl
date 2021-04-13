@@ -55,14 +55,14 @@ void GameLogicImpl::init()
 	child1->material = white;
 	cube1->addChild(child1);
 	
-	auto child2 = GameObject::create();
+	child2 = GameObject::create();
 	child2->localPosition.y += 3;
 	child2->localScale *= 0.5;
 	child2->mesh = mesh;
 	child2->material = red;
 	child1->addChild(child2);
 
-	auto cube2 = GameObject::create();
+	cube2 = GameObject::create();
     cube2->localPosition.x += 1.5;
     cube2->mesh = mesh;
 	cube2->material = blue;
@@ -129,6 +129,15 @@ void GameLogicImpl::update()
 	
 	if(input().keyPressed(GLFW_KEY_Q)) player->position -= player->up() * delta_time * speed;
 	else if(input().keyPressed(GLFW_KEY_E)) player->position += player->up() * delta_time * speed;
+
+	if (input().keyPressed(GLFW_KEY_Z)) {
+		child2->position.x += delta_time;
+		cube2->position.x += delta_time;
+	}
+	else if (input().keyPressed(GLFW_KEY_X)) {
+		child2->position.x -= delta_time;
+		cube2->position.x -= delta_time;
+	}
 
     scene.projection = perspective(radians(60.0f), width / height, 0.1f, 100.0f);
     cube1->preRotate(vec3(0, radians(30.0f) * delta_time, 0));
