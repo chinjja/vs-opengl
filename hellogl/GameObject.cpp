@@ -59,37 +59,32 @@ void GameObject::preRotate(const glm::quat& q)
     localRotation = q * localRotation;
 }
 
-glm::mat4 GameObject::global(bool disable_scale) const
+glm::mat4 GameObject::global() const
 {
-	mat4 m(1);
 	vec3 p(0, 0, 0);
 	quat r(1, vec3());
 	vec3 s(1, 1, 1);
 	
 	std::shared_ptr<const GameObject> cur = shared_from_this();
     while (cur) {
-		const auto par = cur->parent_.lock();
 		p += cur->position;
 		r *= cur->rotation;
 		s *= cur->scale;
 		
-		m = cur->local(disable_scale) * m;
-		cur = par;
+		cur = cur->parent_.lock();
     }
-	m = translate(mat4(1), p) * m;
-	m = mat4_cast(r) * m;
-	m = glm::scale(mat4(1), s) * m;
-    return m;
+	return translate(mat4(1), p) * mat4_cast(r) * glm::scale(mat4(1), s) * local();
 }
 
-glm::mat4 GameObject::local(bool disable_scale) const
+glm::mat4 GameObject::local() const
 {
-    glm::mat4 ret(1);
-	ret = translate(ret, localPosition);
-    ret *= mat4_cast(localRotation);
-	if(!disable_scale)
-		ret = glm::scale(ret, localScale);
-    return ret;
+	mat4 m(1);
+	std::shared_ptr<const GameObject> cur = shared_from_this();
+	while (cur) {
+		m = translate(mat4(1), cur->localPosition) * mat4_cast(cur->localRotation) * glm::scale(mat4(1), cur->localScale) * m;
+		cur = cur->parent_.lock();
+	}
+	return m;
 }
 
 glm::vec3 GameObject::forward() const

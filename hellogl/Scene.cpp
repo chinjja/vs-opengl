@@ -51,8 +51,10 @@ void Scene::render()
 	}
 	if(camera) {
 		shader->bind();
-		auto view = inverse(camera->global(true));
-		shader->setUniformValue("cameraVertex", (vec3)(view * vec4(0, 0, 0, 1)));
+		auto view = inverse(camera->global());
+		vec3 camera_pos = view * vec4(0, 0, 0, 1);
+
+		shader->setUniformValue("cameraVertex", camera_pos);
 		for (auto& it : lights) {
 			auto& light = it.first;
 			auto& obj = it.second;

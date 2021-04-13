@@ -30,8 +30,8 @@ public:
 	void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up = UP);
 	void rotate(const glm::quat& q);
 	void preRotate(const glm::quat& q);
-	glm::mat4 global(bool disable_scale = false) const;
-	glm::mat4 local(bool disable_scale = false) const;
+	glm::mat4 global() const;
+	glm::mat4 local() const;
 	glm::vec3 forward() const;
 	glm::vec3 right() const;
 	glm::vec3 up() const;
