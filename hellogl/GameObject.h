@@ -22,6 +22,9 @@ public:
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::quat rotation;
+	glm::vec3 localPosition;
+	glm::vec3 localScale;
+	glm::quat localRotation;
 
 	void lookAlong(const glm::vec3& direction, const glm::vec3& bais = FORWARD);
 	void lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up = UP);

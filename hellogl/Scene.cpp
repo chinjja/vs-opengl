@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <glm/glm.hpp>
 
 #include "Shader.h"
 #include "GameObject.h"
@@ -8,8 +9,10 @@
 #include "Mesh.h"
 #include "Texture.h"
 #include "Material.h"
+#include "Utils.h"
 
 using namespace std;
+using namespace glm;
 
 void Scene::add(const std::shared_ptr<GameObject>& obj)
 {
@@ -49,7 +52,7 @@ void Scene::render()
 	if(camera) {
 		shader->bind();
 		auto view = inverse(camera->global(true));
-		shader->setUniformValue("cameraVertex", camera->position);
+		shader->setUniformValue("cameraVertex", (vec3)(view * vec4(0, 0, 0, 1)));
 		for (auto& it : lights) {
 			auto& light = it.first;
 			auto& obj = it.second;

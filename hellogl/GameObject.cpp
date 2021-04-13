@@ -14,9 +14,13 @@ const glm::vec3 GameObject::RIGHT = glm::vec3(1.0f, 0.0f, 0.0f);
 const glm::vec3 GameObject::UP = glm::vec3(0.0f, 1.0f, 0.0f);
 
 GameObject::GameObject()
-    : position(0, 0, 0),
-    scale(1, 1, 1),
-    rotation(1, 0, 0, 0),
+    :
+	position(0, 0, 0),
+	scale(1, 1, 1),
+	rotation(1, 0, 0, 0),
+	localPosition(0, 0, 0),
+	localScale(1, 1, 1),
+	localRotation(1, 0, 0, 0),
     mesh(nullptr),
 	light(nullptr),
 	camera(nullptr),
@@ -35,60 +39,72 @@ void GameObject::lookAlong(const glm::vec3& direction, const glm::vec3& bais)
     vec3 v = normalize(direction);
     float angle = acosf(dot(b, v));
     vec3 axis = cross(b, v);
-    rotation = angleAxis(angle, axis);
+    localRotation = angleAxis(angle, axis);
 }
 
 void GameObject::lookAt(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up)
 {
     glm::mat4 m = inverse(glm::lookAt(eye, center, normalize(up)));
-    position = m[3];
-    rotation = glm::quat(m);
+    localPosition = m[3];
+    localRotation = glm::quat(m);
 }
 
 void GameObject::rotate(const glm::quat& q)
 {
-    rotation *= q;
+    localRotation *= q;
 }
 
 void GameObject::preRotate(const glm::quat& q)
 {
-    rotation = q * rotation;
+    localRotation = q * localRotation;
 }
 
 glm::mat4 GameObject::global(bool disable_scale) const
 {
+	mat4 m(1);
+	vec3 p(0, 0, 0);
+	quat r(1, vec3());
+	vec3 s(1, 1, 1);
+	
 	std::shared_ptr<const GameObject> cur = shared_from_this();
-    glm::mat4 m = cur->local(disable_scale);
-    while (!cur->parent().expired()) {
-		cur = cur->parent().lock();
-        m = cur->local(disable_scale) * m;
+    while (cur) {
+		const auto par = cur->parent_.lock();
+		p += cur->position;
+		r *= cur->rotation;
+		s *= cur->scale;
+		
+		m = cur->local(disable_scale) * m;
+		cur = par;
     }
+	m = translate(mat4(1), p) * m;
+	m = mat4_cast(r) * m;
+	m = glm::scale(mat4(1), s) * m;
     return m;
 }
 
 glm::mat4 GameObject::local(bool disable_scale) const
 {
     glm::mat4 ret(1);
-	ret = translate(ret, position);
-    ret *= mat4_cast(rotation);
+	ret = translate(ret, localPosition);
+    ret *= mat4_cast(localRotation);
 	if(!disable_scale)
-		ret = glm::scale(ret, scale);
+		ret = glm::scale(ret, localScale);
     return ret;
 }
 
 glm::vec3 GameObject::forward() const
 {
-    return rotation * FORWARD;
+    return localRotation * FORWARD;
 }
 
 glm::vec3 GameObject::right() const
 {
-    return rotation * RIGHT;
+    return localRotation * RIGHT;
 }
 
 glm::vec3 GameObject::up() const
 {
-    return rotation * UP;
+    return localRotation * UP;
 }
 
 std::weak_ptr<GameObject> GameObject::parent() const
