@@ -11,5 +11,9 @@ public:
 	Camera();
 
 	glm::mat4 matrix(const std::shared_ptr<GameObject>& obj) const;
+	float fov;
+	float near;
+	float far;
+	float ratio;
 };
 

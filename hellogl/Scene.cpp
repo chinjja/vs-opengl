@@ -51,7 +51,9 @@ void Scene::render()
 	}
 	if(camera) {
 		shader->bind();
-		auto view = camera->camera->matrix(camera);
+		auto& cam = camera->camera;
+		auto view = cam->matrix(camera);
+		auto proj = glm::perspective(cam->fov, width / height, cam->near, cam->far);
 		
 		shader->setUniformValue("cameraVertex", vec3());
 		for (auto& it : lights) {
@@ -72,7 +74,7 @@ void Scene::render()
 					shader->setUniformValue("material.reflectance", obj->material->reflectance);
 				}
 				shader->setUniformValue("M", model);
-				shader->setUniformValue("MVP", projection * view * model);
+				shader->setUniformValue("MVP", proj * view * model);
 				mesh->render();
 			}
 			mesh->release();

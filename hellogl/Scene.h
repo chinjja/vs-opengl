@@ -14,7 +14,8 @@ public:
 	void add(const std::shared_ptr<GameObject>& obj);
 	void remove(const std::shared_ptr<GameObject>& obj);
 	void render();
-	glm::mat4 projection;
+	float width;
+	float height;
 	std::shared_ptr<Shader> shader;
 private:
 	std::vector<std::shared_ptr<GameObject>> gameObjects_;

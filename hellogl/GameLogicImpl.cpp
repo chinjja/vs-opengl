@@ -95,6 +95,9 @@ void GameLogicImpl::init()
 	auto camera = GameObject::create();
 	camera->localPosition.z = -2;
 	camera->camera = make_shared<Camera>();
+	camera->camera->fov = radians(60.0f);
+	camera->camera->near = 0.1f;
+	camera->camera->far = 100.0f;
 	
 	head = GameObject::create();
 	head->localPosition.y += 1.1;
@@ -139,7 +142,8 @@ void GameLogicImpl::update()
 		cube2->position.x -= delta_time;
 	}
 
-    scene.projection = perspective(radians(60.0f), width / height, 0.1f, 100.0f);
+	scene.width = width;
+	scene.height = height;
     cube1->preRotate(vec3(0, radians(30.0f) * delta_time, 0));
     scene.render();
 }
