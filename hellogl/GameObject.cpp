@@ -68,7 +68,7 @@ glm::mat4 GameObject::global() const
 	std::shared_ptr<const GameObject> cur = shared_from_this();
     while (cur) {
 		p += cur->position;
-		r *= cur->rotation;
+		r = cur->rotation * r;
 		s *= cur->scale;
 		
 		cur = cur->parent_.lock();

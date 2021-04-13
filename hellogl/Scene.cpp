@@ -31,7 +31,7 @@ void Scene::render()
 {
 	shared_ptr<GameObject> camera;
 	unordered_map<shared_ptr<Mesh>, vector<shared_ptr<GameObject>>> meshes;
-	vector<pair<shared_ptr<Light>, shared_ptr<GameObject>>> lights;
+	vector<shared_ptr<GameObject>> lights;
 	vector<shared_ptr<GameObject>> children;
 	for (auto& root : gameObjects_) {
 		children.clear();
@@ -42,7 +42,7 @@ void Scene::render()
 				meshes[child->mesh].push_back(child);
 			}
 			if (child->light) {
-				lights.push_back(std::make_pair(child->light, child));
+				lights.push_back(child);
 			}
 			if (child->camera) {
 				camera = child;
@@ -51,14 +51,12 @@ void Scene::render()
 	}
 	if(camera) {
 		shader->bind();
-		auto view = inverse(camera->global());
-		vec3 camera_pos = view * vec4(0, 0, 0, 1);
-
-		shader->setUniformValue("cameraVertex", camera_pos);
+		auto view = camera->camera->matrix(camera);
+		
+		shader->setUniformValue("cameraVertex", vec3());
 		for (auto& it : lights) {
-			auto& light = it.first;
-			auto& obj = it.second;
-			shader->setUniformValue("directionalLight.direction", obj->forward());
+			auto& light = it->light;
+			shader->setUniformValue("directionalLight.direction", it->forward());
 			shader->setUniformValue("directionalLight.intensity", light->intensity);
 			shader->setUniformValue("directionalLight.color", light->color);
 		}

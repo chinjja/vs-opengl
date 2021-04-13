@@ -93,7 +93,7 @@ void GameLogicImpl::init()
     scene.add(light);
 	
 	auto camera = GameObject::create();
-	camera->localPosition.z = -0.5;
+	camera->localPosition.z = -2;
 	camera->camera = make_shared<Camera>();
 	
 	head = GameObject::create();
