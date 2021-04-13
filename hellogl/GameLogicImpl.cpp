@@ -87,7 +87,7 @@ void GameLogicImpl::init()
 	plane->material = white;
 	scene.add(plane);
 
-	auto light = GameObject::create();
+	light = GameObject::create();
     light->lookAlong(vec3(0, -1, -1));
     light->light = make_shared<Light>();
     scene.add(light);
@@ -122,6 +122,8 @@ void GameLogicImpl::update()
 		player->preRotate(vec3(0, -pos.x, 0));
 		head->preRotate(vec3(-pos.y, 0, 0));
     }
+
+	light->preRotate(vec3(0, -radians(15.0f) * delta_time, 0));
 	
 	float speed = 5;
 	if(input().keyPressed(GLFW_KEY_W)) player->position += player->forward() * delta_time * speed;

@@ -18,5 +18,6 @@ private:
     std::shared_ptr<GameObject> player;
     std::shared_ptr<GameObject> child2;
     std::shared_ptr<GameObject> cube2;
+    std::shared_ptr<GameObject> light;
 };
 
